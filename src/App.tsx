@@ -27,7 +27,7 @@ type BOAT_STATUS = {
   }[];
 }
 
-type PLAYER_DATA = {
+type TPLAYER_DATA = {
   name: string;
   boats: { [key: string]: BOAT_STATUS };
 }
@@ -47,6 +47,7 @@ const generateItems = () => {
       label: `${LETTERS[col - 1]}${row}`,
       over: false,
       filled: false,
+      filledBy: null,
       done: false,
     };
   });
@@ -72,11 +73,15 @@ const ORIENTATION: { [key: string]: TORIENTATION } = {
   "VERTICAL": "vertical",
   "HORIZONTAL": "horizontal",
 }
-
+type TPLAYER = "player" | "computer" | null;
+const PLAYER: { [key: string]: TPLAYER } = {
+  PLAYER: "player",
+  COMPUTER: "computer",
+}
 
 function App() {
-  const [computerData, setComputerData] = useState<PLAYER_DATA>();
-  const [playerData, setPlayerData] = useState<PLAYER_DATA>();
+  const [computerData, setComputerData] = useState<TPLAYER_DATA>();
+  const [playerData, setPlayerData] = useState<TPLAYER_DATA>();
   const [boxesOver, setBoxesOver] = useState<number[]>([]);
   // const [isConflict, setIsConflict] = useState<boolean>(false);
 
@@ -88,7 +93,7 @@ function App() {
   const [items, setItems] = useState<any[]>(generateItems());
 
   const isConflict = useMemo(() => {
-    return items.some((i: any) => i.filled && boxesOver.includes(i.box));
+    return items.some((i: any) => i.filledBy === PLAYER.PLAYER && i.filled && boxesOver.includes(i.box));
   }, [boxesOver, items]);
   const orientation = useRef<TORIENTATION>(ORIENTATION.HORIZONTAL);
 
@@ -225,7 +230,7 @@ function App() {
 
       const boxes = setBoatPosition({ box, row, boat: boat?.squares });
 
-      const conflict = _items.some((i: any) => i.filled && boxes.includes(i.box));
+      const conflict = _items.some((i: any) => i.filledBy === PLAYER.COMPUTER && i.filled && boxes.includes(i.box));
 
       if (conflict) {
         boats.push(boat);
@@ -235,7 +240,11 @@ function App() {
 
       _items = _items.map((i: any) => {
         if (boxes.includes(i.box)) {
-          return { ...i, filled: true };
+          return {
+            ...i,
+            filled: true,
+            filledBy: PLAYER.COMPUTER,
+          };
         }
 
         return i;
@@ -263,17 +272,28 @@ function App() {
     setBoatPosition({ box, row, boat: BOATS[0].squares });
   }, [setCursorPosition, setBoatPosition]);
 
+  const playerBoatsDone = useMemo(() => {
+    const squares = BOATS.map(b => b.squares).reduce((a, b) => a + b, 0);
+    return items.filter(i => i.filledBy === PLAYER.PLAYER).length === squares;
+  }, [items]);
+
   const onClickBoxHandler = useCallback(() => {
+    if (playerBoatsDone) return;
+
     setItems((prevItems: any) => {
       return prevItems.map((i: any) => {
         if (boxesOver.includes(i.box)) {
-          return { ...i, filled: true };
+          return {
+            ...i,
+            filled: true,
+            filledBy: PLAYER.PLAYER
+          };
         }
 
         return i;
       })
     })
-  }, [boxesOver]);
+  }, [boxesOver, playerBoatsDone]);
 
   return (
     <>
@@ -298,7 +318,8 @@ function App() {
                   "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col",
                   c.over && !isConflict ? 'bg-slate-200' : '',
                   c.over && isConflict ? 'bg-red-200 relative' : '',
-                  c.filled ? 'bg-blue-200' : '',
+                  c.filled && c.filledBy === PLAYER.COMPUTER ? 'bg-slate-100' : '',
+                  c.filled && c.filledBy === PLAYER.PLAYER ? 'bg-blue-500' : '',
                 ].join(' ')}
               ><div>{c.label}</div><div className='text-xs'>{c.box}</div></div>
             </div>)}
