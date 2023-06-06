@@ -115,15 +115,17 @@ function App() {
 
       if (outLeft > 0) {
         boxes = [
-          ...boxes.slice(outLeft),
+          ...Array.from(new Array(boxLeft - outLeft)).map((_, k) => box - (k + 1)).reverse(),
+          box,
           ...Array.from(new Array(outLeft + boxRight)).map((_, k) => box + (k + 1))
-        ]
+        ];
       }
       if (outRight > 0) {
         boxes = [
-          ...Array.from(new Array(boxLeft + outRight)).map((_, k) => box - (k + 1)).reverse(),
-          ...boxes.slice(0, boxes.length - outRight),
-        ]
+          ...Array.from(new Array(outRight + boxLeft)).map((_, k) => box - (k + 1)).reverse(),
+          box,
+          ...Array.from(new Array(boxRight - outRight)).map((_, k) => box + (k + 1)),
+        ];
       }
     }
 
@@ -141,22 +143,28 @@ function App() {
         })
       ];
 
-      const outTop = boxes.filter(i => i < 0).length;
+      const outTop = boxes.filter(i => i <= 0).length;
       const outBottom = boxes.filter(i => i > 100).length;
 
       if (outTop > 0) {
         boxes = [
-          ...boxes.slice(outTop),
-          ...Array.from(new Array(rest)).map((_, k) => {
-            return box +  ((k +  outTop) * BOARD_SIZE)
+          ...Array.from(new Array(boxTop - outTop)).map((_, k) => {
+            return box - ((k + 1) * BOARD_SIZE)
+          }),
+          box,
+          ...Array.from(new Array(outTop + boxBottom)).map((_, k) => {
+            return box + ((k + 1) * BOARD_SIZE)
           })
         ];
       } else if (outBottom > 0) {
         boxes = [
-          ...Array.from(new Array(rest)).map((_, k) => {
-            return box - ((k +  outBottom) * BOARD_SIZE)
-          }),
-          ...boxes.slice(0, -outBottom),
+          ...Array.from(new Array(boxTop + outBottom)).map((_, k) => {
+            return box - ((k + 1) * BOARD_SIZE)
+          }).reverse(),
+          box,
+          ...Array.from(new Array(boxBottom - outBottom)).map((_, k) => {
+            return box + ((k + 1) * BOARD_SIZE)
+          })
         ];
       }
     }
@@ -172,7 +180,9 @@ function App() {
 
         return i
       }))
-    })
+    });
+
+    return boxes;
   }, [orientation])
 
   const switchOrientation = () => {
@@ -204,14 +214,35 @@ function App() {
 
     mounted = true;
 
-    const box = randomNumber(1, BOARD_SIZE * BOARD_SIZE);
-    const row = Math.ceil(box / BOARD_SIZE);
-    const boat = (BOATS[randomNumber(0, 2)]).squares;
+    const boats: any[] = [...BOATS];
+    let _items = structuredClone(items);
 
-    orientation.current = [ORIENTATION.VERTICAL, ORIENTATION.HORIZONTAL][randomNumber(0, 1)];
+    while (boats.length) {
+      const boat = (boats.pop());
+      const box = randomNumber(1, BOARD_SIZE * BOARD_SIZE);
+      const row = Math.ceil(box / BOARD_SIZE);
+      orientation.current = [ORIENTATION.VERTICAL, ORIENTATION.HORIZONTAL][randomNumber(0, 1)];
 
-    setCursorPosition({ box, row, boat });
-    setBoatPosition({ box, row, boat });
+      const boxes = setBoatPosition({ box, row, boat: boat?.squares });
+
+      const conflict = _items.some((i: any) => i.filled && boxes.includes(i.box));
+
+      if (conflict) {
+        boats.push(boat);
+
+        continue;
+      }
+
+      _items = _items.map((i: any) => {
+        if (boxes.includes(i.box)) {
+          return { ...i, filled: true };
+        }
+
+        return i;
+      })
+    }
+
+    setItems(_items)
   }, [])
 
   const board = useMemo(() => {
@@ -233,14 +264,10 @@ function App() {
   }, [setCursorPosition, setBoatPosition]);
 
   const onClickBoxHandler = useCallback(() => {
-    console.log("onClickBoxHandler", boxesOver);
     setItems((prevItems: any) => {
       return prevItems.map((i: any) => {
         if (boxesOver.includes(i.box)) {
-          return {
-            ...i,
-            filled: true,
-          }
+          return { ...i, filled: true };
         }
 
         return i;
