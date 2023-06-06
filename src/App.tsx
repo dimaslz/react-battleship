@@ -1,15 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
 import './App.css'
+import { randomNumber } from './utils';
 
 const BOATS = [{
-  battleship: 5,
+  label: "Battleship",
+  squares: 5,
 }, {
-  destroyer: 4,
+  label: "Destroyer",
+  squares: 4,
 }, {
-  destroyer: 4,
-  }];
+  label: "Destroyer",
+  squares: 4,
+}];
 
 const BOARD_SIZE = 10;
 const LETTERS = "ABCDEFGHIJ";
@@ -48,59 +51,67 @@ const createBoard = (items: any[]) => {
   }, [])
 }
 
+type TORIENTATION = "vertical" | "horizontal";
+const ORIENTATION: { [key: string]: TORIENTATION } = {
+  "VERTICAL": "vertical",
+  "HORIZONTAL": "horizontal",
+}
+
+
 function App() {
-  const [cursorPosition, setCursorPosition] = useState<any>({});
+  const [cursorPosition, setCursorPosition] = useState<any>({
+    box: 1,
+    row: 1,
+    boat: BOATS[0].squares
+  });
   const [items, setItems] = useState<any[]>(generateItems());
-  const [orientation, setOrientation] = useState<"vertical" | "horizontal">("horizontal");
+  const orientation = useRef<TORIENTATION>(ORIENTATION.HORIZONTAL);
 
-  const setBoatPosition = useCallback(({ box, row, boat }: any, o: any) => {
-    // const horizontal = true;
-    // const vertical = false;
-    const horizontal = (o || orientation) === "horizontal";
-    const vertical = (o || orientation) === "vertical";
-    console.log("AAAAA", {horizontal, vertical})
+  const setBoatPosition = useCallback(({ box, row, boat }: any) => {
+    const horizontal = orientation.current === ORIENTATION.HORIZONTAL;
+    const vertical = orientation.current === ORIENTATION.VERTICAL;
+
     let boxes = [box]
-    if (horizontal) {
-      // const boat = BOATS[0].battleship as number;
-      const rest = Math.ceil(boat / 2);
-      const endRow = BOARD_SIZE * row;
-      const restToEnd = endRow - box;
-      const restToStart = (box - (endRow - BOARD_SIZE) - rest) * -1;
-      if (restToEnd >= 2) {
-        if (rest === 3) {
-          boxes = [...boxes, ...Array.from(new Array(2)).map((_, k) => box + k +1)]
-        }
-      } else {
-        boxes = [...boxes, ...Array.from(new Array(restToEnd)).map((_, k) => box + k + 1)]
-      }
+    const even = Boolean(boat % 2);
+    const rest = Math.ceil(boat / 2);
 
-      if (restToStart > 0) {
+    if (horizontal) {
+      const boxLeft = even ? rest - 1 : rest;
+      const boxRight = even ? rest - 1 : rest - 1;
+
+      boxes = [
+        ...Array.from(new Array(boxLeft)).map((_, k) => box - (k + 1)).reverse(),
+        ...boxes,
+        ...Array.from(new Array(boxRight)).map((_, k) => box + (k + 1))
+      ];
+
+      const outLeft = Math.max(0, (BOARD_SIZE * (row - 1)) - (boxes[0] + 1) + boxLeft);
+      const outRight = Math.max(0, ((boxes[boxes.length - 1]) - (BOARD_SIZE * row)));
+
+      if (outLeft > 0) {
         boxes = [
-          ...boxes,
-          ...Array.from(new Array(restToStart)).map((_, k) => box + rest + (k)),
+          ...boxes.slice(outLeft),
+          ...Array.from(new Array(outLeft + boxRight)).map((_, k) => box + (k + 1))
         ]
       }
-
-      if (boxes.length < boat) {
+      if (outRight > 0) {
         boxes = [
-          ...Array.from(new Array(boat - boxes.length)).map((_, k) => box - (k + 1)).reverse(),
-          ...boxes,
+          ...Array.from(new Array(boxLeft + outRight)).map((_, k) => box - (k + 1)).reverse(),
+          ...boxes.slice(0, boxes.length - outRight),
         ]
       }
     }
 
     if (vertical) {
-      const boat = BOATS[0].battleship as number;
-      const rest = Math.ceil(boat / 2);
-      const endRow = BOARD_SIZE * row;
-      const restToEnd = endRow - box;
-      const restToStart = (box - (endRow - BOARD_SIZE) - rest) * -1;
+      const boxTop = even ? rest - 1 : rest;
+      const boxBottom = even ? rest - 1 : rest - 1;
+
       boxes = [
-        ...Array.from(new Array(2)).map((_, k) => {
+        ...Array.from(new Array(boxTop)).map((_, k) => {
           return box - ((k + 1) * BOARD_SIZE)
         }).reverse(),
         ...boxes,
-        ...Array.from(new Array(2)).map((_, k) => {
+        ...Array.from(new Array(boxBottom)).map((_, k) => {
           return box + ((k + 1) * BOARD_SIZE)
         })
       ];
@@ -108,15 +119,14 @@ function App() {
       const outTop = boxes.filter(i => i < 0).length;
       const outBottom = boxes.filter(i => i > 100).length;
 
-      if (outTop) {
+      if (outTop > 0) {
         boxes = [
           ...boxes.slice(outTop),
           ...Array.from(new Array(rest)).map((_, k) => {
             return box +  ((k +  outTop) * BOARD_SIZE)
           })
         ];
-      }
-      if (outBottom) {
+      } else if (outBottom > 0) {
         boxes = [
           ...Array.from(new Array(rest)).map((_, k) => {
             return box - ((k +  outBottom) * BOARD_SIZE)
@@ -127,7 +137,7 @@ function App() {
     }
 
     setItems((prevItems) => {
-      return structuredClone(prevItems.map((i, k) => {
+      return (prevItems.map((i, k) => {
         if (boxes.includes(i.box)) {
           i.done = true
         } else {
@@ -137,23 +147,19 @@ function App() {
         return i
       }))
     })
+  }, [orientation])
 
-    console.log("AAA")
-  }, [orientation, setItems])
+  const switchOrientation = () => {
+    orientation.current = orientation.current === ORIENTATION.HORIZONTAL
+      ? ORIENTATION.VERTICAL
+      : ORIENTATION.HORIZONTAL;
+  }
 
   const onKeydownHandler = useCallback(async ($event: any) => {
     if ($event.code === "Space") {
-      await setOrientation((prev) => {
-        console.log("prev", prev)
-        if (prev === "vertical") {
-          return "horizontal";
-        }
+      switchOrientation();
 
-        return "vertical";
-      })
-
-      console.log("cursorPosition", {cursorPosition, orientation})
-      setBoatPosition(cursorPosition, orientation === "horizontal" ? "vertical" : "horizontal");
+      setBoatPosition(cursorPosition);
     }
   }, [cursorPosition, setBoatPosition]);
 
@@ -163,7 +169,24 @@ function App() {
     return () => {
       document.removeEventListener("keydown", onKeydownHandler);
     }
-  }, [onKeydownHandler, setOrientation])
+  }, [onKeydownHandler])
+
+  // INIT
+  let mounted = false;
+  useEffect(() => {
+    if (mounted) return;
+
+    mounted = true;
+
+    const box = randomNumber(1, BOARD_SIZE * BOARD_SIZE);
+    const row = Math.ceil(box / BOARD_SIZE);
+    const boat = (BOATS[randomNumber(0, 2)]).squares;
+
+    orientation.current = [ORIENTATION.VERTICAL, ORIENTATION.HORIZONTAL][randomNumber(0, 1)];
+
+    setCursorPosition({ box, row, boat });
+    setBoatPosition({ box, row, boat });
+  }, [])
 
   const board = useMemo(() => {
     return createBoard(items);
@@ -177,37 +200,34 @@ function App() {
     })
   }
 
-  const update2 = () => {
-    // const index = squares.findIndex((s: any) => s.label === "A2");
-    // squares[index].hit = true;
-    // setSquares(structuredClone(squares))
-  }
-
-  const onMouseOverHandler = ($event: any) => {
-    const { box, row } = JSON.parse($event.target.dataset.position);
-
-    setCursorPosition({ box, row, boat: BOATS[0].battleship });
-    setBoatPosition({ box, row, boat: BOATS[0].battleship });
-  }
+  const onMouseOverHandler = useCallback(({ box, label, col, row}: any) => {
+    // OPTION
+    setCursorPosition({ box, row, boat: BOATS[0].squares });
+    setBoatPosition({ box, row, boat: BOATS[0].squares });
+  }, [setCursorPosition, setBoatPosition])
 
   return (
     <>
       <button onClick={update}>HIT</button>
-      <button onClick={update2}>HIT2</button>
-      <pre>{JSON.stringify(items[35], null, 2)}</pre>
 
-      <div className='flex flex-col'>
+      <div className='flex flex-col w-full justify-center items-center'>
         {board.map((r, rowKey) => {
           return <div key={rowKey} className='flex'>
-            {r.map((c: any) => <>
-              <div className={[
-                  "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:bg-slate-50 hover:cursor-pointer",
-                  c.done ? 'bg-red-500' : '',
-              ].join(' ')}
-                data-position={`{ "col": ${c.col}, "row": ${c.row}, "box": ${BOARD_SIZE * (c.row -1) + c.col} }`}
-                onMouseOver={onMouseOverHandler}
-                key={c.label}>{c.label}{JSON.stringify(c.hit)}</div>
-            </>)}
+            {r.map((c: any) => <div
+              className='flex'
+              key={c.label}
+              data-position={
+                `{ "col": ${c.col}, "row": ${c.row}, "box": ${c.box} }`
+              }
+              onMouseOver={() => onMouseOverHandler(c)}
+            >
+              <div
+                className={[
+                  "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col relative z-10",
+                  c.done ? 'bg-red-200' : '',
+                ].join(' ')}
+              ><div>{c.label}</div><div className='text-xs'>{c.box}</div></div>
+            </div>)}
           </div>
         })}
       </div>
