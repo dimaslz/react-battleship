@@ -34,10 +34,20 @@ function App() {
   const [boxesOver, setBoxesOver] = useState<number[]>([]);
   const [showComputerBoats, setShowComputerBoats] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
+  const [gameReady, setGameReady] = useState<boolean>(false);
 
   const [boatToSet, setBoatToSet] = useState<any | null>(null);
   const [cursorPosition, setCursorPosition] = useState<any | null>(null);
   const [items, setItems] = useState<any[]>(structuredClone(generateItems()));
+
+  const playersAreReady = useMemo(() => {
+    const boatsLeng = BOATS.map((boat) => boat.squares)
+      .reduce((accumulator, current) => accumulator + current, 0);
+    const computerIsReady = items.filter((item) => item.player[PLAYER.COMPUTER]?.filled).length === boatsLeng;
+    const humanIsReady = items.filter((item) => item.player[PLAYER.HUMAN]?.filled).length === boatsLeng;
+
+    return computerIsReady && humanIsReady;
+  }, [items])
 
   const isConflict = useMemo(() => {
     return boatToSet && items.some((i: any) => {
@@ -212,7 +222,7 @@ function App() {
     }
 
     setItems(_items)
-  }, [])
+  }, [gameStarted])
 
   const board = useMemo(() => {
     return createBoard(items);
@@ -304,6 +314,12 @@ function App() {
     setGameStarted(true);
   }
 
+  const onClickStartGame = useCallback(() => {
+    if (playersAreReady) {
+      setGameReady(true);
+    }
+  }, [playersAreReady])
+
   if (!gameStarted) {
     return <>
       <div className='absolute z-10 inset-0 w-full h-full bg-white'>
@@ -316,6 +332,7 @@ function App() {
     <>
       <pre>{JSON.stringify(isConflict)}</pre>
       <pre>{JSON.stringify(boxesOver)}</pre>
+      <pre>{JSON.stringify(gameReady)}</pre>
       <button onClick={update}>HIT</button>
 
       <div>
@@ -348,7 +365,7 @@ function App() {
             </div>
           </div>
 
-          <div className='w-full bg-slate-50 p-4'>
+          {!gameReady && <div className='w-full bg-slate-50 p-4'>
             <h2>Boats</h2>
             <div className='text-sm py-4'>
               <p>Here your boats! Click on one of them and (the color will turn to orange), and move the mouse to on the Board in the left. Press <code className='font-console'>space</code> bar to change the orientation. Once you have desired where you want to sert your boat, click on the box in the board and back here to get other boat.</p>
@@ -368,7 +385,25 @@ function App() {
                   </div>
                 </div>)}
             </div>
-          </div>
+
+            <div className='mt-12'>
+              <button
+                className={[
+                  "text-2xl py-2 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-800 hover:cursor-pointer",
+                  !playerBoatsDone ? "cursor-not-allowed disabled:bg-gray-400" : ''
+                ].join(" ")}
+                disabled={!playersAreReady}
+                onClick={onClickStartGame}
+              >start</button>
+            </div>
+          </div>}
+          {gameReady && <div className='w-full p-4'>
+            <h2>Scores</h2>
+
+            <div className='w-auto space-y-4'>
+              ...
+            </div>
+          </div>}
         </div>
 
         <div className='flex w-full justify-start mt-12'>
