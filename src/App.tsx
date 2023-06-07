@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import './App.css'
 import { randomNumber } from './utils';
-import { BOARD_BOX_ITEM, TORIENTATION, TPLAYER_TYPE } from './types';
-import { BOARD_SIZE, BOATS, ORIENTATION, PLAYER, SHOT_VALUE } from './constants';
-import { generateItems } from './methods';
+import { BOARD_BOX_ITEM, TPLAYER_TYPE } from './types';
+import { BOARD_SIZE, BOATS, PLAYER, SHOT_VALUE } from './constants';
+import { createArray, generateItems } from './methods';
 import WelcomeLayout from './components/welcome-layout.component';
 import { ComputerBoard, HumanBoard } from './components';
-import { useBoard } from './hooks';
+import { useBoard, useGame } from './hooks';
 
 let boatsForPlayer = structuredClone(BOATS.map(b => ({
   ...b,
@@ -29,6 +29,10 @@ function App() {
   const [boatToSet, setBoatToSet] = useState<any | null>(null);
   const [cursorPosition, setCursorPosition] = useState<any | null>(null);
   const [shotResult, setShotResult] = useState<any | null>(null);
+  const { setBoatPosition, switchOrientation, randomOrientation } = useGame({
+    setBoxesOver,
+    updateItems,
+  })
 
   const totalPosibleScores = BOATS.map((boat) => boat.squares).reduce((a, b) => a + b, 0);
   const humanScores = useMemo(() => {
@@ -65,106 +69,6 @@ function App() {
       return i.player[PLAYER.HUMAN].filled && boxesOver.includes(i.box);
     });
   }, [boxesOver, items, boatToSet]);
-  const orientation = useRef<TORIENTATION>(ORIENTATION.HORIZONTAL);
-
-  const setBoatPosition = useCallback(({ box, row, boat }: any) => {
-    const horizontal = orientation.current === ORIENTATION.HORIZONTAL;
-    const vertical = orientation.current === ORIENTATION.VERTICAL;
-
-    let boxes = [box]
-    const even = Boolean(boat % 2);
-    const rest = Math.ceil(boat / 2);
-
-    if (horizontal) {
-      const boxLeft = even ? rest - 1 : rest;
-      const boxRight = even ? rest - 1 : rest - 1;
-
-      boxes = [
-        ...Array.from(new Array(boxLeft)).map((_, k) => box - (k + 1)).reverse(),
-        ...boxes,
-        ...Array.from(new Array(boxRight)).map((_, k) => box + (k + 1))
-      ];
-
-      const outLeft = Math.max(0, (BOARD_SIZE * (row - 1)) - (boxes[0] + 1) + boxLeft);
-      const outRight = Math.max(0, ((boxes[boxes.length - 1]) - (BOARD_SIZE * row)));
-
-      if (outLeft > 0) {
-        boxes = [
-          ...Array.from(new Array(boxLeft - outLeft)).map((_, k) => box - (k + 1)).reverse(),
-          box,
-          ...Array.from(new Array(outLeft + boxRight)).map((_, k) => box + (k + 1))
-        ];
-      }
-      if (outRight > 0) {
-        boxes = [
-          ...Array.from(new Array(outRight + boxLeft)).map((_, k) => box - (k + 1)).reverse(),
-          box,
-          ...Array.from(new Array(boxRight - outRight)).map((_, k) => box + (k + 1)),
-        ];
-      }
-    }
-
-    if (vertical) {
-      const boxTop = even ? rest - 1 : rest;
-      const boxBottom = even ? rest - 1 : rest - 1;
-
-      boxes = [
-        ...Array.from(new Array(boxTop)).map((_, k) => {
-          return box - ((k + 1) * BOARD_SIZE)
-        }).reverse(),
-        ...boxes,
-        ...Array.from(new Array(boxBottom)).map((_, k) => {
-          return box + ((k + 1) * BOARD_SIZE)
-        })
-      ];
-
-      const outTop = boxes.filter(i => i <= 0).length;
-      const outBottom = boxes.filter(i => i > 100).length;
-
-      if (outTop > 0) {
-        boxes = [
-          ...Array.from(new Array(boxTop - outTop)).map((_, k) => {
-            return box - ((k + 1) * BOARD_SIZE)
-          }),
-          box,
-          ...Array.from(new Array(outTop + boxBottom)).map((_, k) => {
-            return box + ((k + 1) * BOARD_SIZE)
-          })
-        ];
-      } else if (outBottom > 0) {
-        boxes = [
-          ...Array.from(new Array(boxTop + outBottom)).map((_, k) => {
-            return box - ((k + 1) * BOARD_SIZE)
-          }).reverse(),
-          box,
-          ...Array.from(new Array(boxBottom - outBottom)).map((_, k) => {
-            return box + ((k + 1) * BOARD_SIZE)
-          })
-        ];
-      }
-    }
-
-    setBoxesOver(boxes);
-    updateItems((prevItems) => {
-      return (prevItems.map((i) => {
-        if (boxes.includes(i.box)) {
-          i.over = true
-        } else {
-          i.over = false
-        }
-
-        return i
-      }))
-    });
-
-    return boxes;
-  }, [orientation])
-
-  const switchOrientation = () => {
-    orientation.current = orientation.current === ORIENTATION.HORIZONTAL
-      ? ORIENTATION.VERTICAL
-      : ORIENTATION.HORIZONTAL;
-  }
 
   const onKeydownHandler = useCallback(async ($event: any) => {
     if ($event.code === "Space") {
@@ -174,7 +78,7 @@ function App() {
         setBoatPosition(cursorPosition);
       }
     }
-  }, [cursorPosition, setBoatPosition]);
+  }, [cursorPosition, setBoatPosition, switchOrientation]);
 
   useEffect(() => {
     document.addEventListener("keydown", onKeydownHandler);
@@ -200,7 +104,7 @@ function App() {
       const boat = (boats.pop());
       const box = randomNumber(1, BOARD_SIZE * BOARD_SIZE);
       const row = Math.ceil(box / BOARD_SIZE);
-      orientation.current = [ORIENTATION.VERTICAL, ORIENTATION.HORIZONTAL][randomNumber(0, 1)];
+      randomOrientation();
 
       const boxes = setBoatPosition({ box, row, boat: boat?.squares });
 
@@ -578,7 +482,7 @@ function App() {
                 >
                   <div className='w-full h-full absolute flex items-center justify-center pointer-events-none'>{boat.label}</div>
                   <div className='flex items-center justify-center pointer-events-none'>
-                    {Array.from(new Array(boat.squares)).map((_, squareKey: number) => {
+                    {createArray(boat.squares).map((_, squareKey: number) => {
                       return <div className={[
                         'w-[50px] h-[50px] border',
                         boat.pending ? 'bg-orange-200' : 'bg-blue-600',
