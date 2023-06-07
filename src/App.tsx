@@ -2,20 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import './App.css'
 import { randomNumber } from './utils';
-
-const BOATS = [{
-  label: "Battleship",
-  squares: 5,
-}, {
-  label: "Destroyer",
-  squares: 4,
-}, {
-  label: "Destroyer",
-  squares: 4,
-}];
-
-const BOARD_SIZE = 10;
-const LETTERS = "ABCDEFGHIJ";
+import { TORIENTATION } from './types';
+import { BOARD_SIZE, BOATS, ORIENTATION, PLAYER } from './constants';
+import { createBoard, generateItems } from './methods';
 
 type BOAT_STATUS = {
   uuid?: string;
@@ -31,53 +20,6 @@ type TPLAYER_DATA = {
   name: string;
   boats: { [key: string]: BOAT_STATUS };
 }
-const generateItems = () => {
-  let row = 0;
-  return Array.from(new Array(BOARD_SIZE * BOARD_SIZE)).map((i, index) => {
-    if (index % BOARD_SIZE === 0) {
-      row++;
-    }
-
-    const col = (index % BOARD_SIZE + 1);
-
-    return {
-      box: index + 1,
-      col,
-      row,
-      label: `${LETTERS[col - 1]}${row}`,
-      over: false,
-      filled: false,
-      filledBy: null,
-      done: false,
-    };
-  });
-}
-
-const createBoard = (items: any[]) => {
-  let row: any[] = [];
-  return items.reduce((a: any[], b: any) => {
-    if ((b.col % BOARD_SIZE) === 0) {
-      row.push(b);
-      a.push(row);
-      row = [];
-    } else {
-      row.push(b);
-    }
-
-    return a;
-  }, [])
-}
-
-type TORIENTATION = "vertical" | "horizontal";
-const ORIENTATION: { [key: string]: TORIENTATION } = {
-  "VERTICAL": "vertical",
-  "HORIZONTAL": "horizontal",
-}
-type TPLAYER = "player" | "computer" | null;
-const PLAYER: { [key: string]: TPLAYER } = {
-  PLAYER: "player",
-  COMPUTER: "computer",
-}
 
 let boatsForPlayer = structuredClone(BOATS.map(b => ({
   ...b,
@@ -90,7 +32,6 @@ function App() {
   const [playerData, setPlayerData] = useState<TPLAYER_DATA>();
   const [boxesOver, setBoxesOver] = useState<number[]>([]);
   const [showComputerBoats, setShowComputerBoats] = useState<boolean>(false);
-  // const [isConflict, setIsConflict] = useState<boolean>(false);
 
   const [boatToSet, setBoatToSet] = useState<any | null>(null);
   const [cursorPosition, setCursorPosition] = useState<any | null>(null);
@@ -415,8 +356,8 @@ function App() {
                   <div
                     className={[
                       "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col",
-                      c.over && !isConflict && boatToSet ? 'bg-slate-200' : '',
-                      c.over && isConflict && boatToSet ? 'bg-red-200 relative' : '',
+                      // c.over && !isConflict && boatToSet ? 'bg-slate-200' : '',
+                      // c.over && isConflict && boatToSet ? 'bg-red-200 relative' : '',
                       c.filled && c.filledBy === PLAYER.COMPUTER ? 'bg-slate-200' : '',
                       // c.filled && c.filledBy === PLAYER.PLAYER ? 'bg-blue-500' : '',
                     ].join(' ')}
