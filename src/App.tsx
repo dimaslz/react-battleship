@@ -251,6 +251,7 @@ function App() {
   }, [items]);
 
   const onClickToSetBoatHandler = useCallback(() => {
+    if (isConflict) return;
     if (playerBoatsDone) return;
     if (!boatToSet) return;
 
@@ -323,6 +324,8 @@ function App() {
   }, [playersAreReady])
 
   const onClickBoxToShotHandler = useCallback(async ({ box }: any) => {
+    if (items.some((item) => item.player[PLAYER.HUMAN].shot)) return;
+
     const successShot = items.find((item) => {
       return item.box === box && item.player[PLAYER.COMPUTER].filled
     });
@@ -541,11 +544,11 @@ function App() {
                       <div
                         className={[
                           "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col",
-                          c.player[PLAYER.HUMAN].shot === SHOT_VALUE.TOUCH ? 'border-red-400 border-2' : '',
+                          c.player[PLAYER.HUMAN].shot === SHOT_VALUE.TOUCH ? 'border-red-400 border-2 cursor-not-allowed' : '',
                           c.player[PLAYER.HUMAN].shot === SHOT_VALUE.WATER ? 'border-blue-400 border-2' : '',
                           c.player[PLAYER.COMPUTER].shot === SHOT_VALUE.TOUCH ? 'bg-red-400' : '',
                           c.over && !isConflict && boatToSet ? 'bg-slate-200' : '',
-                          c.over && isConflict && boatToSet ? 'bg-red-200 relative' : '',
+                          c.over && isConflict && boatToSet ? 'bg-red-200 !cursor-not-allowed' : '',
                           !hideBoats && c.player[PLAYER.HUMAN].filled ? 'bg-blue-500' : '',
                           hideBoats && c.player[PLAYER.HUMAN].filled ? 'bg-blue-50' : '',
                         ].join(' ')}
