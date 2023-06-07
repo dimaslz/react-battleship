@@ -290,6 +290,16 @@ function App() {
     setShowComputerBoats((prev: boolean) => !prev);
   }, [])
 
+  const onMouseLeaveBoardHandler = useCallback(() => {
+    setItems((prevItems) => {
+      return (prevItems.map((i) => {
+        i.over = false;
+
+        return i
+      }))
+    });
+  }, [])
+
   const onStartGame = () => {
     setGameStarted(true);
   }
@@ -312,7 +322,7 @@ function App() {
         <div className='flex'>
           <div className='flex flex-col'>
             <h2>Your board</h2>
-            <div className='flex flex-col w-full justify-center items-center'>
+            <div className='flex flex-col w-full justify-center items-center' onMouseLeave={onMouseLeaveBoardHandler}>
               {board.map((r, rowKey) => {
                 return <div key={rowKey} className='flex'>
                   {r.map((c: any) => <div
