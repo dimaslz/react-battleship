@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import './App.css'
 import { randomNumber } from './utils';
-import { TORIENTATION } from './types';
-import { BOARD_SIZE, BOATS, ORIENTATION, PLAYER } from './constants';
+import { BOARD_ITEM, TORIENTATION } from './types';
+import { BOARD_SIZE, BOATS, ORIENTATION, PLAYER, SHOT_VALUE } from './constants';
 import { createBoard, generateItems } from './methods';
 import WelcomeLayout from './components/welcome-layout.component';
 
@@ -37,6 +37,7 @@ function App() {
   const [gameReady, setGameReady] = useState<boolean>(false);
   const [gameCounter, setGameCounter] = useState<number>(5);
   const [counterState, setCounterState] = useState<string>("");
+  const [hideBoats, setHideBoats] = useState<boolean>(false);
 
   const [boatToSet, setBoatToSet] = useState<any | null>(null);
   const [cursorPosition, setCursorPosition] = useState<any | null>(null);
@@ -238,8 +239,7 @@ function App() {
     })
   }
 
-  const onMouseOverHandler = useCallback(({ box, label, col, row }: any) => {
-    // OPTION
+  const onMouseOverToSetBoatHandler = useCallback(({ box, row }: any) => {
     if (!boatToSet) return;
 
     setCursorPosition({ box, row, boat: boatToSet.boat.squares });
@@ -251,7 +251,7 @@ function App() {
     return items.filter(i => i.player[PLAYER.HUMAN].filled).length === squares;
   }, [items]);
 
-  const onClickBoxHandler = useCallback(() => {
+  const onClickToSetBoatHandler = useCallback(() => {
     if (playerBoatsDone) return;
     if (!boatToSet) return;
 
@@ -322,6 +322,21 @@ function App() {
     }
   }, [playersAreReady])
 
+  const onClickBoxToShotHandler = useCallback(({ box }: any) => {
+    setItems((prevItems: BOARD_ITEM[]) => {
+      return prevItems.map((item: BOARD_ITEM) => {
+        const isComputerBoat = item.player[PLAYER.COMPUTER].filled;
+        if (item.box === box) {
+          item.player[PLAYER.HUMAN].shot = isComputerBoat
+            ? SHOT_VALUE.TOUCH
+            : SHOT_VALUE.WATER;
+        }
+
+        return item;
+      })
+    });
+  }, [])
+
   const runCounter = useCallback(async () => {
     setCounterState(String(gameCounter));
     await new Promise((resolve) => setTimeout(() => resolve(null), 1000));
@@ -380,21 +395,36 @@ function App() {
                       data-position={
                         `{ "col": ${c.col}, "row": ${c.row}, "box": ${c.box} }`
                       }
-                      onMouseOver={() => onMouseOverHandler(c)}
-                      onClick={onClickBoxHandler}
+                      onMouseOver={() => onMouseOverToSetBoatHandler(c)}
+                      onClick={() => gameReady
+                        ? onClickBoxToShotHandler({ box: c.box })
+                        : onClickToSetBoatHandler()
+                      }
                     >
                       <div
                         className={[
                           "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col",
+                          c.player[PLAYER.HUMAN].shot === SHOT_VALUE.TOUCH ? 'border-red-400 border-2' : '',
+                          c.player[PLAYER.HUMAN].shot === SHOT_VALUE.WATER ? 'border-blue-400 border-2' : '',
                           c.over && !isConflict && boatToSet ? 'bg-slate-200' : '',
                           c.over && isConflict && boatToSet ? 'bg-red-200 relative' : '',
-                          c.player[PLAYER.HUMAN].filled ? 'bg-blue-500' : '',
+                          !hideBoats && c.player[PLAYER.HUMAN].filled ? 'bg-blue-500' : '',
+                          hideBoats && c.player[PLAYER.HUMAN].filled ? 'bg-blue-50' : '',
                         ].join(' ')}
                       ><div>{c.label}</div><div className='text-xs'>{c.box}</div></div>
                     </div>)}
                   </div>
                 })}
               </div>
+              {gameReady && !counterState && <div className='w-full flex items-start'>
+                <button
+                  onClick={() => setHideBoats((prev) => !prev)}
+                  className='p-2 bg-blue-800 text-white hover:bg-blue-950'
+                >
+                  {!hideBoats && <span>hide boats</span>}
+                  {hideBoats && <span>show boats</span>}
+                </button>
+              </div>}
             </div>
           </div>
 
@@ -459,13 +489,16 @@ function App() {
                   data-position={
                     `{ "col": ${c.col}, "row": ${c.row}, "box": ${c.box} }`
                   }
-                  onMouseOver={() => onMouseOverHandler(c)}
-                  onClick={onClickBoxHandler}
+                  onMouseOver={() => onMouseOverToSetBoatHandler(c)}
+                  onClick={onClickToSetBoatHandler}
                 >
                   <div
                     className={[
                       "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col",
                       c.player[PLAYER.COMPUTER].filled ? 'bg-slate-200' : '',
+                      c.player[PLAYER.COMPUTER].shot === SHOT_VALUE.TOUCH ? 'border-red-400 border-2' : '',
+                      c.player[PLAYER.COMPUTER].shot === SHOT_VALUE.WATER ? 'border-blue-400 border-2' : '',
+                      c.player[PLAYER.HUMAN].shot === SHOT_VALUE.TOUCH ? 'bg-red-400' : '',
                     ].join(' ')}
                   ><div>{c.label}</div><div className='text-xs'>{c.box}</div></div>
                 </div>)}
