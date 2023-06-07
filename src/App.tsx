@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import './App.css'
 import { randomNumber } from './utils';
-import { BOARD_ITEM, TORIENTATION } from './types';
+import { BOARD_ITEM, TORIENTATION, TPLAYER_TYPE } from './types';
 import { BOARD_SIZE, BOATS, ORIENTATION, PLAYER, SHOT_VALUE } from './constants';
 import { createBoard, generateItems } from './methods';
 import WelcomeLayout from './components/welcome-layout.component';
@@ -39,6 +39,7 @@ function App() {
   const [counterState, setCounterState] = useState<string>("");
   const [hideBoats, setHideBoats] = useState<boolean>(false);
 
+  const [turn, setTurn] = useState<TPLAYER_TYPE | null>(null);
   const [boatToSet, setBoatToSet] = useState<any | null>(null);
   const [cursorPosition, setCursorPosition] = useState<any | null>(null);
   const [items, setItems] = useState<any[]>(structuredClone(generateItems()));
@@ -335,7 +336,50 @@ function App() {
         return item;
       })
     });
+    setTurn(PLAYER.COMPUTER)
   }, [])
+
+  const randomTurn = useCallback(() => {
+    const player = [PLAYER.HUMAN, PLAYER.COMPUTER][randomNumber(0, 1)];
+
+    setTurn(player)
+  }, []);
+
+  const computerTurnAction = useCallback(async () => {
+    await new Promise((resolve) => setTimeout(() => resolve(null), 1000));
+
+    const allowedBoxes = items.filter((item) => !item.player[PLAYER.COMPUTER].shot);
+    const box = randomNumber(0, allowedBoxes.length);
+    const alreadyDone = items.find((item, itemIndex) => (
+      itemIndex === box && item.player[PLAYER.COMPUTER].shot
+    ));
+
+    if (alreadyDone) {
+      computerTurnAction();
+      return;
+    }
+
+    setItems((prevItems: BOARD_ITEM[]) => {
+      return prevItems.map((item: BOARD_ITEM) => {
+        const isHumanBoat = item.player[PLAYER.HUMAN].filled;
+        if (item.box === box) {
+          item.player[PLAYER.COMPUTER].shot = isHumanBoat
+            ? SHOT_VALUE.TOUCH
+            : SHOT_VALUE.WATER;
+        }
+
+        return item;
+      });
+    });
+
+    setTurn(PLAYER.HUMAN);
+  }, [items]);
+
+  useEffect(() => {
+    if (turn === PLAYER.COMPUTER) {
+      computerTurnAction();
+    }
+  }, [turn, computerTurnAction]);
 
   const runCounter = useCallback(async () => {
     setCounterState(String(gameCounter));
@@ -347,6 +391,8 @@ function App() {
 
       await new Promise((resolve) => setTimeout(() => resolve(null), 500));
       setCounterState("");
+
+      randomTurn();
 
       return;
     }
@@ -382,11 +428,17 @@ function App() {
         <div className='flex'>
           <div className='flex flex-col'>
             <h2>Your board</h2>
-            <div className='relative'>
-              {counterState && <div className='absolute inset-0 w-full h-full bg-white bg-opacity-80 flex items-center justify-center'>
-                {counterState && <div className='text-8xl'>{counterState}</div>}
-              </div>}
-              <div className='flex flex-col w-full justify-center items-center' onMouseLeave={onMouseLeaveBoardHandler}>
+            <div>
+              <div
+                className='flex flex-col w-full justify-center items-center relative'
+                onMouseLeave={onMouseLeaveBoardHandler}
+              >
+                {counterState && <div className='absolute inset-0 w-full h-full bg-white bg-opacity-80 flex items-center justify-center'>
+                  {counterState && <div className='text-8xl'>{counterState}</div>}
+                </div>}
+                {turn === PLAYER.COMPUTER && <div className='absolute inset-0 w-full h-full bg-white bg-opacity-80 flex items-center justify-center'>
+                  Computer is thinking
+                </div>}
                 {board.map((r, rowKey) => {
                   return <div key={rowKey} className='flex'>
                     {r.map((c: any) => <div
@@ -406,6 +458,7 @@ function App() {
                           "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col",
                           c.player[PLAYER.HUMAN].shot === SHOT_VALUE.TOUCH ? 'border-red-400 border-2' : '',
                           c.player[PLAYER.HUMAN].shot === SHOT_VALUE.WATER ? 'border-blue-400 border-2' : '',
+                          c.player[PLAYER.COMPUTER].shot === SHOT_VALUE.TOUCH ? 'bg-red-400' : '',
                           c.over && !isConflict && boatToSet ? 'bg-slate-200' : '',
                           c.over && isConflict && boatToSet ? 'bg-red-200 relative' : '',
                           !hideBoats && c.player[PLAYER.HUMAN].filled ? 'bg-blue-500' : '',
@@ -416,14 +469,20 @@ function App() {
                   </div>
                 })}
               </div>
-              {gameReady && !counterState && <div className='w-full flex items-start'>
-                <button
-                  onClick={() => setHideBoats((prev) => !prev)}
-                  className='p-2 bg-blue-800 text-white hover:bg-blue-950'
-                >
-                  {!hideBoats && <span>hide boats</span>}
-                  {hideBoats && <span>show boats</span>}
-                </button>
+              {gameReady && !counterState && <div>
+                <div className='w-full flex items-start'>
+                  <button
+                    onClick={() => setHideBoats((prev) => !prev)}
+                    className='p-2 bg-blue-800 text-white hover:bg-blue-950'
+                  >
+                    {!hideBoats && <span>hide boats</span>}
+                    {hideBoats && <span>show boats</span>}
+                  </button>
+                </div>
+                <div className='w-full'>
+                  {turn === PLAYER.HUMAN && <span className='text-green-600'>your turn</span>}
+                  {turn === PLAYER.COMPUTER && <span className='text-red-600'>wait!, the computer is thinking</span>}
+                </div>
               </div>}
             </div>
           </div>
