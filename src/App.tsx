@@ -7,21 +7,6 @@ import { BOARD_SIZE, BOATS, ORIENTATION, PLAYER, SHOT_VALUE } from './constants'
 import { createBoard, generateItems } from './methods';
 import WelcomeLayout from './components/welcome-layout.component';
 
-type BOAT_STATUS = {
-  uuid?: string;
-  name: string;
-  damage: {
-    box: string;
-    col: number;
-    row: number;
-  }[];
-}
-
-type TPLAYER_DATA = {
-  name: string;
-  boats: { [key: string]: BOAT_STATUS };
-}
-
 let boatsForPlayer = structuredClone(BOATS.map(b => ({
   ...b,
   pending: false,
@@ -29,8 +14,6 @@ let boatsForPlayer = structuredClone(BOATS.map(b => ({
 })));
 
 function App() {
-  const [computerData, setComputerData] = useState<TPLAYER_DATA>();
-  const [playerData, setPlayerData] = useState<TPLAYER_DATA>();
   const [boxesOver, setBoxesOver] = useState<number[]>([]);
   const [showComputerBoats, setShowComputerBoats] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
@@ -42,7 +25,8 @@ function App() {
   const [turn, setTurn] = useState<TPLAYER_TYPE | null>(null);
   const [boatToSet, setBoatToSet] = useState<any | null>(null);
   const [cursorPosition, setCursorPosition] = useState<any | null>(null);
-  const [items, setItems] = useState<any[]>(structuredClone(generateItems()));
+  const [items, setItems] = useState<BOARD_ITEM[]>(structuredClone(generateItems()));
+  const [shotResult, setShotResult] = useState<any | null>(null);
 
   const totalPosibleScores = BOATS.map((boat) => boat.squares).reduce((a, b) => a + b, 0);
   const humanScores = useMemo(() => {
@@ -160,7 +144,7 @@ function App() {
 
     setBoxesOver(boxes);
     setItems((prevItems) => {
-      return (prevItems.map((i, k) => {
+      return (prevItems.map((i) => {
         if (boxes.includes(i.box)) {
           i.over = true
         } else {
@@ -253,14 +237,6 @@ function App() {
     return createBoard(items);
   }, [items])
 
-  const update = () => {
-    setItems((prevItems) => {
-      prevItems[35].done = true;
-
-      return structuredClone(prevItems);
-    })
-  }
-
   const onMouseOverToSetBoatHandler = useCallback(({ box, row }: any) => {
     if (!boatToSet) return;
 
@@ -302,7 +278,7 @@ function App() {
     setBoatToSet(null);
     setBoxesOver([]);
     setItems((prevItems) => {
-      return (prevItems.map((i, k) => {
+      return (prevItems.map((i) => {
         i.over = false;
 
         return i
@@ -311,6 +287,7 @@ function App() {
   }, [boxesOver, boatToSet, playerBoatsDone]);
 
   const onClickBoatHandler = useCallback((boat: any, key: number) => {
+    if (boat.done) return;
     setBoatToSet({ boat, key });
 
     boatsForPlayer = boatsForPlayer.map((b: any) => ({
@@ -344,7 +321,11 @@ function App() {
     }
   }, [playersAreReady])
 
-  const onClickBoxToShotHandler = useCallback(({ box }: any) => {
+  const onClickBoxToShotHandler = useCallback(async ({ box }: any) => {
+    const successShot = items.find((item) => {
+      return item.box === box && item.player[PLAYER.COMPUTER].filled
+    });
+
     setItems((prevItems: BOARD_ITEM[]) => {
       return prevItems.map((item: BOARD_ITEM) => {
         const isComputerBoat = item.player[PLAYER.COMPUTER].filled;
@@ -357,8 +338,26 @@ function App() {
         return item;
       })
     });
-    setTurn(PLAYER.COMPUTER)
-  }, [])
+
+    await new Promise((resolve) => setTimeout(() => resolve(null), 500));
+
+    if (successShot) {
+      setShotResult({
+        type: SHOT_VALUE.TOUCH,
+        content: "Nice shot!!! 🙌",
+      });
+    } else {
+      setShotResult({
+        type: SHOT_VALUE.WATER,
+        content: "Oops! water!, sharpen your aim 🎯",
+      });
+    }
+
+    await new Promise((resolve) => setTimeout(() => resolve(null), 1000));
+
+    setShotResult(null);
+    setTurn(PLAYER.COMPUTER);
+  }, [items])
 
   const randomTurn = useCallback(() => {
     const player = [PLAYER.HUMAN, PLAYER.COMPUTER][randomNumber(0, 1)];
@@ -367,6 +366,7 @@ function App() {
   }, []);
 
   const computerTurnAction = useCallback(async () => {
+    console.log("computerTurnAction")
     await new Promise((resolve) => setTimeout(() => resolve(null), 1000));
 
     const allowedBoxes = items.filter((item) => !item.player[PLAYER.COMPUTER].shot);
@@ -380,7 +380,11 @@ function App() {
       return;
     }
 
-    setItems((prevItems: BOARD_ITEM[]) => {
+    const successShot = items.find((item) => {
+      return item.box === box && item.player[PLAYER.HUMAN].filled
+    });
+
+    await setItems((prevItems: BOARD_ITEM[]) => {
       return prevItems.map((item: BOARD_ITEM) => {
         const isHumanBoat = item.player[PLAYER.HUMAN].filled;
         if (item.box === box) {
@@ -393,14 +397,32 @@ function App() {
       });
     });
 
+    await new Promise((resolve) => setTimeout(() => resolve(null), 500));
+
     setTurn(PLAYER.HUMAN);
+
+    if (successShot) {
+      setShotResult({
+        type: SHOT_VALUE.TOUCH,
+        content: "😵, the computer hits one of your boats",
+      });
+    } else {
+      setShotResult({
+        type: SHOT_VALUE.WATER,
+        content: "Water!! Everyone is save!",
+      });
+    }
+
+    await new Promise((resolve) => setTimeout(() => resolve(null), 1000));
+
+    setShotResult(null);
   }, [items]);
 
   useEffect(() => {
     if (turn === PLAYER.COMPUTER) {
       computerTurnAction();
     }
-  }, [turn, computerTurnAction]);
+  }, [turn]);
 
   const runCounter = useCallback(async () => {
     setCounterState(String(gameCounter));
@@ -418,7 +440,6 @@ function App() {
       return;
     }
 
-    // await new Promise((resolve) => setTimeout(() => resolve(null), 1000));
     if (gameReady) {
       setGameCounter(gameCounter - 1);
     }
@@ -477,10 +498,16 @@ function App() {
 
   return (
     <>
-      <pre>{JSON.stringify(isConflict)}</pre>
-      <pre>{JSON.stringify(boxesOver)}</pre>
-      <pre>{JSON.stringify(gameReady)}</pre>
-      <button onClick={update}>HIT</button>
+      {shotResult && <div className='absolute z-10 inset-0 flex items-center justify-center w-full h-full'>
+        <div className='flex items-center justify-center flex-col w-[600px] bg-white'>
+          <div className={[
+            'text-4xl',
+            shotResult.type === SHOT_VALUE.WATER ? 'text-blue-400' : 'text-green-400'
+          ].join(" ")}>
+            {shotResult.content}
+          </div>
+        </div>
+      </div>}
 
       <div>
         <div className='flex'>
@@ -552,7 +579,14 @@ function App() {
             </div>
             <div className='w-auto space-y-4'>
               {boatsForPlayer?.map((boat: any, boatKey: number) =>
-                <div className='relative' key={boatKey} onClick={() => onClickBoatHandler(boat, boatKey)}>
+                <div
+                  className={[
+                    'relative',
+                    boat.done ? 'cursor-not-allowed' : ''
+                  ].join(" ")}
+                  key={boatKey}
+                  onClick={() => onClickBoatHandler(boat, boatKey)}
+                >
                   <div className='w-full h-full absolute flex items-center justify-center pointer-events-none'>{boat.label}</div>
                   <div className='flex items-center justify-center pointer-events-none'>
                     {Array.from(new Array(boat.squares)).map((_, squareKey: number) => {

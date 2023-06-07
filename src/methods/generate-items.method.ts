@@ -3,7 +3,7 @@ import { BOARD_ITEM } from "../types";
 
 const generateItems = (): BOARD_ITEM[] => {
 	let row = 0;
-	return Array.from(new Array(BOARD_SIZE * BOARD_SIZE)).map((i, index) => {
+	return Array.from(new Array(BOARD_SIZE * BOARD_SIZE)).map((_, index) => {
 		if (index % BOARD_SIZE === 0) {
 			row++;
 		}
