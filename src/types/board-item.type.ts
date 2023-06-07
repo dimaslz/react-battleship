@@ -1,10 +1,5 @@
-type BOARD_ITEM = {
-	box: number;
-	col: number;
-	row: number;
-	label: string;
-	over: boolean;
-	player: { [key: string]: any | null };
-};
+import BOARD_BOX_ITEM from "./board-box-item.type";
 
-export default BOARD_ITEM;
+type BOARD_ROW = BOARD_BOX_ITEM[];
+
+export default BOARD_ROW;

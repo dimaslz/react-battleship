@@ -1,7 +1,7 @@
 import { BOARD_SIZE, LETTERS, PLAYER } from "../constants";
-import { BOARD_ITEM } from "../types";
+import { BOARD_BOX_ITEM } from "../types";
 
-const generateItems = (): BOARD_ITEM[] => {
+const generateItems = (): BOARD_BOX_ITEM[] => {
 	let row = 0;
 	return Array.from(new Array(BOARD_SIZE * BOARD_SIZE)).map((_, index) => {
 		if (index % BOARD_SIZE === 0) {

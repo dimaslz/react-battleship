@@ -2,10 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import './App.css'
 import { randomNumber } from './utils';
-import { BOARD_ITEM, TORIENTATION, TPLAYER_TYPE } from './types';
+import { BOARD_BOX_ITEM, TORIENTATION, TPLAYER_TYPE } from './types';
 import { BOARD_SIZE, BOATS, ORIENTATION, PLAYER, SHOT_VALUE } from './constants';
 import { createBoard, generateItems } from './methods';
 import WelcomeLayout from './components/welcome-layout.component';
+import { Board, ComputerBoardItem } from './components';
 
 let boatsForPlayer = structuredClone(BOATS.map(b => ({
   ...b,
@@ -25,7 +26,7 @@ function App() {
   const [turn, setTurn] = useState<TPLAYER_TYPE | null>(null);
   const [boatToSet, setBoatToSet] = useState<any | null>(null);
   const [cursorPosition, setCursorPosition] = useState<any | null>(null);
-  const [items, setItems] = useState<BOARD_ITEM[]>(structuredClone(generateItems()));
+  const [items, setItems] = useState<BOARD_BOX_ITEM[]>(structuredClone(generateItems()));
   const [shotResult, setShotResult] = useState<any | null>(null);
 
   const totalPosibleScores = BOATS.map((boat) => boat.squares).reduce((a, b) => a + b, 0);
@@ -326,8 +327,8 @@ function App() {
       return item.box === box && item.player[PLAYER.COMPUTER].filled
     });
 
-    setItems((prevItems: BOARD_ITEM[]) => {
-      return prevItems.map((item: BOARD_ITEM) => {
+    setItems((prevItems: BOARD_BOX_ITEM[]) => {
+      return prevItems.map((item: BOARD_BOX_ITEM) => {
         const isComputerBoat = item.player[PLAYER.COMPUTER].filled;
         if (item.box === box) {
           item.player[PLAYER.HUMAN].shot = isComputerBoat
@@ -472,7 +473,7 @@ function App() {
 
   if (humanWins) {
     return <div className='flex'>
-      <div className='absolute z-10 inset-0 w-full h-full bg-white text-red-600 flex items-center justify-center flex-col'>
+      <div className='absolute z-10 inset-0 w-full h-full bg-white text-green-600 flex items-center justify-center flex-col'>
         <div className='text-8xl'>
           You wins!!! Congrats! 🏆
         </div>
@@ -630,30 +631,8 @@ function App() {
           </button>
         </div>
         {showComputerBoats && <div>
-          <h2>Computer board</h2>
-          <div className='flex flex-col w-full justify-center items-center'>
-            {board.map((r, rowKey) => {
-              return <div key={rowKey} className='flex'>
-                {r.map((c: any) => <div
-                  className='flex'
-                  key={c.label}
-                  data-position={
-                    `{ "col": ${c.col}, "row": ${c.row}, "box": ${c.box} }`
-                  }
-                >
-                  <div
-                    className={[
-                      "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed flex-col",
-                      c.player[PLAYER.COMPUTER].filled ? 'bg-slate-200' : '',
-                      c.player[PLAYER.COMPUTER].shot === SHOT_VALUE.TOUCH ? 'border-red-400 border-2' : '',
-                      c.player[PLAYER.COMPUTER].shot === SHOT_VALUE.WATER ? 'border-blue-400 border-2' : '',
-                      c.player[PLAYER.HUMAN].shot === SHOT_VALUE.TOUCH ? 'bg-red-400' : '',
-                    ].join(' ')}
-                  >{c.label}</div>
-                </div>)}
-              </div>
-            })}
-          </div>
+          <h2>Computer bddoard</h2>
+          <Board board={board} ItemComponent={ComputerBoardItem} />
           <div>
 
           </div>
