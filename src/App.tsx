@@ -44,6 +44,27 @@ function App() {
   const [cursorPosition, setCursorPosition] = useState<any | null>(null);
   const [items, setItems] = useState<any[]>(structuredClone(generateItems()));
 
+  const totalPosibleScores = BOATS.map((boat) => boat.squares).reduce((a, b) => a + b, 0);
+  const humanScores = useMemo(() => {
+    return items.filter((item) => {
+      return item.player[PLAYER.HUMAN].shot === SHOT_VALUE.TOUCH;
+    }).length;
+  }, [items]);
+
+  const computerScores = useMemo(() => {
+    return items.filter((item) => {
+      return item.player[PLAYER.COMPUTER].shot === SHOT_VALUE.TOUCH;
+    }).length;
+  }, [items]);
+
+  const computerWins = useMemo(() => {
+    return computerScores === totalPosibleScores;
+  }, [computerScores])
+
+  const humanWins = useMemo(() => {
+    return humanScores === totalPosibleScores;
+  }, [humanScores])
+
   const playersAreReady = useMemo(() => {
     const boatsLeng = BOATS.map((boat) => boat.squares)
       .reduce((accumulator, current) => accumulator + current, 0);
@@ -409,6 +430,43 @@ function App() {
     runCounter();
   }, [gameReady, runCounter, gameCounter])
 
+  const resetGame = () => {
+    window.location.reload();
+  };
+
+  if (computerWins) {
+    return <div className='flex'>
+      <div className='absolute z-10 inset-0 w-full h-full bg-white text-red-600 flex items-center justify-center flex-col'>
+        <div className='text-8xl'>
+          You lost!, good luck next time 😑
+        </div>
+        <button
+          onClick={resetGame}
+          className='py-2 px-4 bg-blue-800 text-white hover:bg-blue-950 mt-12 rounded-full'
+        >
+          reset game
+        </button>
+      </div>
+    </div>
+  }
+
+  if (humanWins) {
+    return <div className='flex'>
+      <div className='absolute z-10 inset-0 w-full h-full bg-white text-red-600 flex items-center justify-center flex-col'>
+        <div className='text-8xl'>
+          You wins!!! Congrats! 🏆
+        </div>
+        <button
+          onClick={resetGame}
+          className='py-2 px-4 bg-blue-800 text-white hover:bg-blue-950 mt-12 rounded-full'
+        >
+          reset game
+        </button>
+      </div>
+    </div>
+  }
+
+
   if (!gameStarted) {
     return <>
       <div className='absolute z-10 inset-0 w-full h-full bg-white'>
@@ -427,7 +485,7 @@ function App() {
       <div>
         <div className='flex'>
           <div className='flex flex-col'>
-            <h2>Your board</h2>
+            <h2 className='text-4xl py-2'>Your board</h2>
             <div>
               <div
                 className='flex flex-col w-full justify-center items-center relative'
@@ -475,8 +533,8 @@ function App() {
                     onClick={() => setHideBoats((prev) => !prev)}
                     className='p-2 bg-blue-800 text-white hover:bg-blue-950'
                   >
-                    {!hideBoats && <span>hide boats</span>}
-                    {hideBoats && <span>show boats</span>}
+                    {!hideBoats && <div>hide boats</div>}
+                    {hideBoats && <div>show boats</div>}
                   </button>
                 </div>
                 <div className='w-full'>
@@ -487,8 +545,8 @@ function App() {
             </div>
           </div>
 
-          {!gameReady && <div className='w-full bg-slate-50 p-4'>
-            <h2>Boats</h2>
+          {!gameReady && <div className='w-full p-4'>
+            <h2 className='text-4xl py-2'>Boats</h2>
             <div className='text-sm py-4'>
               <p>Here your boats! Click on one of them and (the color will turn to orange), and move the mouse to on the Board in the left. Press <code className='font-console'>space</code> bar to change the orientation. Once you have desired where you want to sert your boat, click on the box in the board and back here to get other boat.</p>
             </div>
@@ -520,10 +578,11 @@ function App() {
             </div>
           </div>}
           {gameReady && <div className='w-full p-4'>
-            <h2>Scores</h2>
+            <h2 className='text-4xl py-2'>Scores</h2>
 
             <div className='w-auto space-y-4'>
-              ...
+              <div>You: {humanScores}</div>
+              <div>Computer: {computerScores}</div>
             </div>
           </div>}
         </div>
