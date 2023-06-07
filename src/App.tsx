@@ -89,6 +89,7 @@ function App() {
   const [computerData, setComputerData] = useState<TPLAYER_DATA>();
   const [playerData, setPlayerData] = useState<TPLAYER_DATA>();
   const [boxesOver, setBoxesOver] = useState<number[]>([]);
+  const [showComputerBoats, setShowComputerBoats] = useState<boolean>(false);
   // const [isConflict, setIsConflict] = useState<boolean>(false);
 
   const [boatToSet, setBoatToSet] = useState<any | null>(null);
@@ -327,57 +328,107 @@ function App() {
     boatsForPlayer[key].pending = true;
   }, []);
 
+  const onClickShowComputerBoatsHandler = useCallback(() => {
+    setShowComputerBoats((prev: boolean) => !prev);
+  }, [])
+
   return (
     <>
       <pre>{JSON.stringify(isConflict)}</pre>
       <pre>{JSON.stringify(boxesOver)}</pre>
       <button onClick={update}>HIT</button>
 
-      <div className='flex'>
-        <div className='flex flex-col w-full justify-center items-center'>
-          {board.map((r, rowKey) => {
-            return <div key={rowKey} className='flex'>
-              {r.map((c: any) => <div
-                className='flex'
-                key={c.label}
-                data-position={
-                  `{ "col": ${c.col}, "row": ${c.row}, "box": ${c.box} }`
-                }
-                onMouseOver={() => onMouseOverHandler(c)}
-                onClick={onClickBoxHandler}
-              >
-                <div
-                  className={[
-                    "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col",
-                    c.over && !isConflict && boatToSet ? 'bg-slate-200' : '',
-                    c.over && isConflict && boatToSet ? 'bg-red-200 relative' : '',
-                    // c.filled && c.filledBy === PLAYER.COMPUTER ? 'bg-slate-100' : '',
-                    c.filled && c.filledBy === PLAYER.PLAYER ? 'bg-blue-500' : '',
-                  ].join(' ')}
-                ><div>{c.label}</div><div className='text-xs'>{c.box}</div></div>
-              </div>)}
-            </div>
-          })}
-        </div>
-
-        <div className='w-full bg-slate-50'>
-          <h2>Boats</h2>
-          <div className='w-auto'>
-            {boatsForPlayer?.map((boat: any, boatKey: number) =>
-              <div className='relative border hover:border-2' key={boatKey} onClick={() => onClickBoatHandler(boat, boatKey)}>
-                <div className='w-full h-full absolute flex items-center justify-center pointer-events-none'>{boat.label}</div>
-                <div className='flex items-center justify-center pointer-events-none'>
-                  {Array.from(new Array(boat.squares)).map((_, squareKey: number) => {
-                    return <div className={[
-                      'w-[50px] h-[50px] border',
-                      boat.pending ? 'bg-orange-200' : 'bg-blue-600',
-                      boat.done ? 'bg-green-200' : 'bg-blue-600',
-                    ].join(" ")} key={squareKey}></div>
-                  })}
+      <div>
+        <div className='flex'>
+          <div className='flex flex-col'>
+            <h2>Your board</h2>
+            <div className='flex flex-col w-full justify-center items-center'>
+              {board.map((r, rowKey) => {
+                return <div key={rowKey} className='flex'>
+                  {r.map((c: any) => <div
+                    className='flex'
+                    key={c.label}
+                    data-position={
+                      `{ "col": ${c.col}, "row": ${c.row}, "box": ${c.box} }`
+                    }
+                    onMouseOver={() => onMouseOverHandler(c)}
+                    onClick={onClickBoxHandler}
+                  >
+                    <div
+                      className={[
+                        "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col",
+                        c.over && !isConflict && boatToSet ? 'bg-slate-200' : '',
+                        c.over && isConflict && boatToSet ? 'bg-red-200 relative' : '',
+                        // c.filled && c.filledBy === PLAYER.COMPUTER ? 'bg-slate-100' : '',
+                        c.filled && c.filledBy === PLAYER.PLAYER ? 'bg-blue-500' : '',
+                      ].join(' ')}
+                    ><div>{c.label}</div><div className='text-xs'>{c.box}</div></div>
+                  </div>)}
                 </div>
-              </div>)}
+              })}
+            </div>
+          </div>
+
+          <div className='w-full bg-slate-50'>
+            <h2>Boats</h2>
+            <div className='w-auto space-y-4'>
+              {boatsForPlayer?.map((boat: any, boatKey: number) =>
+                <div className='relative' key={boatKey} onClick={() => onClickBoatHandler(boat, boatKey)}>
+                  <div className='w-full h-full absolute flex items-center justify-center pointer-events-none'>{boat.label}</div>
+                  <div className='flex items-center justify-center pointer-events-none'>
+                    {Array.from(new Array(boat.squares)).map((_, squareKey: number) => {
+                      return <div className={[
+                        'w-[50px] h-[50px] border',
+                        boat.pending ? 'bg-orange-200' : 'bg-blue-600',
+                        boat.done ? 'bg-green-200' : 'bg-blue-600',
+                      ].join(" ")} key={squareKey}></div>
+                    })}
+                  </div>
+                </div>)}
+            </div>
           </div>
         </div>
+
+        <div className='flex w-full justify-start mt-12'>
+          <button
+            onClick={onClickShowComputerBoatsHandler}
+            className='p-2 bg-blue-800 text-white'
+          >
+            {!showComputerBoats && <span>show computer boats (just to test)</span>}
+            {showComputerBoats && <span>hide computer boats</span>}
+          </button>
+        </div>
+        {showComputerBoats && <div>
+          <h2>Computer board</h2>
+          <div className='flex flex-col w-full justify-center items-center'>
+            {board.map((r, rowKey) => {
+              return <div key={rowKey} className='flex'>
+                {r.map((c: any) => <div
+                  className='flex'
+                  key={c.label}
+                  data-position={
+                    `{ "col": ${c.col}, "row": ${c.row}, "box": ${c.box} }`
+                  }
+                  onMouseOver={() => onMouseOverHandler(c)}
+                  onClick={onClickBoxHandler}
+                >
+                  <div
+                    className={[
+                      "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col",
+                      c.over && !isConflict && boatToSet ? 'bg-slate-200' : '',
+                      c.over && isConflict && boatToSet ? 'bg-red-200 relative' : '',
+                      c.filled && c.filledBy === PLAYER.COMPUTER ? 'bg-slate-200' : '',
+                      // c.filled && c.filledBy === PLAYER.PLAYER ? 'bg-blue-500' : '',
+                    ].join(' ')}
+                  ><div>{c.label}</div><div className='text-xs'>{c.box}</div></div>
+                </div>)}
+              </div>
+            })}
+          </div>
+          <div>
+
+          </div>
+        </div>}
       </div>
     </>
   )
