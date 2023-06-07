@@ -366,7 +366,6 @@ function App() {
   }, []);
 
   const computerTurnAction = useCallback(async () => {
-    console.log("computerTurnAction")
     await new Promise((resolve) => setTimeout(() => resolve(null), 1000));
 
     const allowedBoxes = items.filter((item) => !item.player[PLAYER.COMPUTER].shot);
@@ -549,7 +548,7 @@ function App() {
                           !hideBoats && c.player[PLAYER.HUMAN].filled ? 'bg-blue-500' : '',
                           hideBoats && c.player[PLAYER.HUMAN].filled ? 'bg-blue-50' : '',
                         ].join(' ')}
-                      ><div>{c.label}</div><div className='text-xs'>{c.box}</div></div>
+                      >{c.label}</div>
                     </div>)}
                   </div>
                 })}
@@ -641,18 +640,16 @@ function App() {
                   data-position={
                     `{ "col": ${c.col}, "row": ${c.row}, "box": ${c.box} }`
                   }
-                  onMouseOver={() => onMouseOverToSetBoatHandler(c)}
-                  onClick={onClickToSetBoatHandler}
                 >
                   <div
                     className={[
-                      "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col",
+                      "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed flex-col",
                       c.player[PLAYER.COMPUTER].filled ? 'bg-slate-200' : '',
                       c.player[PLAYER.COMPUTER].shot === SHOT_VALUE.TOUCH ? 'border-red-400 border-2' : '',
                       c.player[PLAYER.COMPUTER].shot === SHOT_VALUE.WATER ? 'border-blue-400 border-2' : '',
                       c.player[PLAYER.HUMAN].shot === SHOT_VALUE.TOUCH ? 'bg-red-400' : '',
                     ].join(' ')}
-                  ><div>{c.label}</div><div className='text-xs'>{c.box}</div></div>
+                  >{c.label}</div>
                 </div>)}
               </div>
             })}
