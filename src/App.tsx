@@ -35,6 +35,8 @@ function App() {
   const [showComputerBoats, setShowComputerBoats] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [gameReady, setGameReady] = useState<boolean>(false);
+  const [gameCounter, setGameCounter] = useState<number>(5);
+  const [counterState, setCounterState] = useState<string>("");
 
   const [boatToSet, setBoatToSet] = useState<any | null>(null);
   const [cursorPosition, setCursorPosition] = useState<any | null>(null);
@@ -320,6 +322,32 @@ function App() {
     }
   }, [playersAreReady])
 
+  const runCounter = useCallback(async () => {
+    setCounterState(String(gameCounter));
+    await new Promise((resolve) => setTimeout(() => resolve(null), 1000));
+
+    if (gameCounter === 1) {
+      setGameCounter(0);
+      setCounterState("goooo!");
+
+      await new Promise((resolve) => setTimeout(() => resolve(null), 500));
+      setCounterState("");
+
+      return;
+    }
+
+    // await new Promise((resolve) => setTimeout(() => resolve(null), 1000));
+    if (gameReady) {
+      setGameCounter(gameCounter - 1);
+    }
+  }, [gameReady, gameCounter]);
+
+  useEffect(() => {
+    if (!gameReady || gameCounter === 0) return;
+
+    runCounter();
+  }, [gameReady, runCounter, gameCounter])
+
   if (!gameStarted) {
     return <>
       <div className='absolute z-10 inset-0 w-full h-full bg-white'>
@@ -339,29 +367,34 @@ function App() {
         <div className='flex'>
           <div className='flex flex-col'>
             <h2>Your board</h2>
-            <div className='flex flex-col w-full justify-center items-center' onMouseLeave={onMouseLeaveBoardHandler}>
-              {board.map((r, rowKey) => {
-                return <div key={rowKey} className='flex'>
-                  {r.map((c: any) => <div
-                    className='flex'
-                    key={c.label}
-                    data-position={
-                      `{ "col": ${c.col}, "row": ${c.row}, "box": ${c.box} }`
-                    }
-                    onMouseOver={() => onMouseOverHandler(c)}
-                    onClick={onClickBoxHandler}
-                  >
-                    <div
-                      className={[
-                        "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col",
-                        c.over && !isConflict && boatToSet ? 'bg-slate-200' : '',
-                        c.over && isConflict && boatToSet ? 'bg-red-200 relative' : '',
-                        c.player[PLAYER.HUMAN].filled ? 'bg-blue-500' : '',
-                      ].join(' ')}
-                    ><div>{c.label}</div><div className='text-xs'>{c.box}</div></div>
-                  </div>)}
-                </div>
-              })}
+            <div className='relative'>
+              {counterState && <div className='absolute inset-0 w-full h-full bg-white bg-opacity-80 flex items-center justify-center'>
+                {counterState && <div className='text-8xl'>{counterState}</div>}
+              </div>}
+              <div className='flex flex-col w-full justify-center items-center' onMouseLeave={onMouseLeaveBoardHandler}>
+                {board.map((r, rowKey) => {
+                  return <div key={rowKey} className='flex'>
+                    {r.map((c: any) => <div
+                      className='flex'
+                      key={c.label}
+                      data-position={
+                        `{ "col": ${c.col}, "row": ${c.row}, "box": ${c.box} }`
+                      }
+                      onMouseOver={() => onMouseOverHandler(c)}
+                      onClick={onClickBoxHandler}
+                    >
+                      <div
+                        className={[
+                          "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col",
+                          c.over && !isConflict && boatToSet ? 'bg-slate-200' : '',
+                          c.over && isConflict && boatToSet ? 'bg-red-200 relative' : '',
+                          c.player[PLAYER.HUMAN].filled ? 'bg-blue-500' : '',
+                        ].join(' ')}
+                      ><div>{c.label}</div><div className='text-xs'>{c.box}</div></div>
+                    </div>)}
+                  </div>
+                })}
+              </div>
             </div>
           </div>
 
