@@ -5,6 +5,7 @@ import { randomNumber } from './utils';
 import { TORIENTATION } from './types';
 import { BOARD_SIZE, BOATS, ORIENTATION, PLAYER } from './constants';
 import { createBoard, generateItems } from './methods';
+import WelcomeLayout from './components/welcome-layout.component';
 
 type BOAT_STATUS = {
   uuid?: string;
@@ -32,6 +33,7 @@ function App() {
   const [playerData, setPlayerData] = useState<TPLAYER_DATA>();
   const [boxesOver, setBoxesOver] = useState<number[]>([]);
   const [showComputerBoats, setShowComputerBoats] = useState<boolean>(false);
+  const [gameStarted, setGameStarted] = useState<boolean>(false);
 
   const [boatToSet, setBoatToSet] = useState<any | null>(null);
   const [cursorPosition, setCursorPosition] = useState<any | null>(null);
@@ -164,6 +166,7 @@ function App() {
   // INIT
   let mounted = false;
   useEffect(() => {
+    if (!gameStarted) return;
     if (mounted) return;
     setItems(structuredClone(generateItems()));
 
@@ -287,6 +290,18 @@ function App() {
     setShowComputerBoats((prev: boolean) => !prev);
   }, [])
 
+  const onStartGame = () => {
+    setGameStarted(true);
+  }
+
+  if (!gameStarted) {
+    return <>
+      <div className='absolute z-10 inset-0 w-full h-full bg-white'>
+        <WelcomeLayout onClickStart={onStartGame} />
+      </div>
+    </>
+  }
+
   return (
     <>
       <pre>{JSON.stringify(isConflict)}</pre>
@@ -323,8 +338,11 @@ function App() {
             </div>
           </div>
 
-          <div className='w-full bg-slate-50'>
+          <div className='w-full bg-slate-50 p-4'>
             <h2>Boats</h2>
+            <div className='text-sm py-4'>
+              <p>Here your boats! Click on one of them and (the color will turn to orange), and move the mouse to on the Board in the left. Press <code className='font-console'>space</code> bar to change the orientation. Once you have desired where you want to sert your boat, click on the box in the board and back here to get other boat.</p>
+            </div>
             <div className='w-auto space-y-4'>
               {boatsForPlayer?.map((boat: any, boatKey: number) =>
                 <div className='relative' key={boatKey} onClick={() => onClickBoatHandler(boat, boatKey)}>
