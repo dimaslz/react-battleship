@@ -4,9 +4,10 @@ import './App.css'
 import { randomNumber } from './utils';
 import { BOARD_BOX_ITEM, TORIENTATION, TPLAYER_TYPE } from './types';
 import { BOARD_SIZE, BOATS, ORIENTATION, PLAYER, SHOT_VALUE } from './constants';
-import { createBoard, generateItems } from './methods';
+import { generateItems } from './methods';
 import WelcomeLayout from './components/welcome-layout.component';
 import { ComputerBoard, HumanBoard } from './components';
+import { useBoard } from './hooks';
 
 let boatsForPlayer = structuredClone(BOATS.map(b => ({
   ...b,
@@ -15,6 +16,7 @@ let boatsForPlayer = structuredClone(BOATS.map(b => ({
 })));
 
 function App() {
+  const { items, updateItems, board } = useBoard(structuredClone(generateItems()));
   const [boxesOver, setBoxesOver] = useState<number[]>([]);
   const [showComputerBoats, setShowComputerBoats] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
@@ -26,7 +28,6 @@ function App() {
   const [turn, setTurn] = useState<TPLAYER_TYPE | null>(null);
   const [boatToSet, setBoatToSet] = useState<any | null>(null);
   const [cursorPosition, setCursorPosition] = useState<any | null>(null);
-  const [items, setItems] = useState<BOARD_BOX_ITEM[]>(structuredClone(generateItems()));
   const [shotResult, setShotResult] = useState<any | null>(null);
 
   const totalPosibleScores = BOATS.map((boat) => boat.squares).reduce((a, b) => a + b, 0);
@@ -144,7 +145,7 @@ function App() {
     }
 
     setBoxesOver(boxes);
-    setItems((prevItems) => {
+    updateItems((prevItems) => {
       return (prevItems.map((i) => {
         if (boxes.includes(i.box)) {
           i.over = true
@@ -188,7 +189,7 @@ function App() {
   useEffect(() => {
     if (!gameStarted) return;
     if (mounted) return;
-    setItems(structuredClone(generateItems()));
+    updateItems(structuredClone(generateItems()));
 
     mounted = true;
 
@@ -231,12 +232,8 @@ function App() {
       })
     }
 
-    setItems(_items)
+    updateItems(_items)
   }, [gameStarted])
-
-  const board = useMemo(() => {
-    return createBoard(items);
-  }, [items])
 
   const onMouseOverToSetBoatHandler = useCallback(({ box, row }: any) => {
     if (!boatToSet) return;
@@ -255,7 +252,7 @@ function App() {
     if (playerBoatsDone) return;
     if (!boatToSet) return;
 
-    setItems((prevItems: any) => {
+    updateItems((prevItems: any) => {
       return prevItems.map((i: any) => {
         if (boxesOver.includes(i.box)) {
           return {
@@ -279,7 +276,7 @@ function App() {
     boatsForPlayer[boatToSet.key].done = true;
     setBoatToSet(null);
     setBoxesOver([]);
-    setItems((prevItems) => {
+    updateItems((prevItems) => {
       return (prevItems.map((i) => {
         i.over = false;
 
@@ -304,7 +301,7 @@ function App() {
   }, [])
 
   const onMouseLeaveBoardHandler = useCallback(() => {
-    setItems((prevItems) => {
+    updateItems((prevItems) => {
       return (prevItems.map((i) => {
         i.over = false;
 
@@ -324,13 +321,14 @@ function App() {
   }, [playersAreReady])
 
   const onClickBoxToShotHandler = useCallback(async ({ box }: any) => {
-    if (items.some((item) => item.player[PLAYER.HUMAN].shot)) return;
+    const alreadyFired = items.find((item) => item.box === box && item.player[PLAYER.HUMAN].shot);
+    if (alreadyFired) return;
 
     const successShot = items.find((item) => {
       return item.box === box && item.player[PLAYER.COMPUTER].filled
     });
 
-    setItems((prevItems: BOARD_BOX_ITEM[]) => {
+    updateItems((prevItems: BOARD_BOX_ITEM[]) => {
       return prevItems.map((item: BOARD_BOX_ITEM) => {
         const isComputerBoat = item.player[PLAYER.COMPUTER].filled;
         if (item.box === box) {
@@ -387,7 +385,7 @@ function App() {
       return item.box === box && item.player[PLAYER.HUMAN].filled
     });
 
-    await setItems((prevItems: BOARD_BOX_ITEM[]) => {
+    await updateItems((prevItems: BOARD_BOX_ITEM[]) => {
       return prevItems.map((item: BOARD_BOX_ITEM) => {
         const isHumanBoat = item.player[PLAYER.HUMAN].filled;
         if (item.box === box) {
