@@ -6,7 +6,7 @@ import { BOARD_BOX_ITEM, TORIENTATION, TPLAYER_TYPE } from './types';
 import { BOARD_SIZE, BOATS, ORIENTATION, PLAYER, SHOT_VALUE } from './constants';
 import { createBoard, generateItems } from './methods';
 import WelcomeLayout from './components/welcome-layout.component';
-import { Board, ComputerBoardItem } from './components';
+import { ComputerBoard, HumanBoard } from './components';
 
 let boatsForPlayer = structuredClone(BOATS.map(b => ({
   ...b,
@@ -387,8 +387,8 @@ function App() {
       return item.box === box && item.player[PLAYER.HUMAN].filled
     });
 
-    await setItems((prevItems: BOARD_ITEM[]) => {
-      return prevItems.map((item: BOARD_ITEM) => {
+    await setItems((prevItems: BOARD_BOX_ITEM[]) => {
+      return prevItems.map((item: BOARD_BOX_ITEM) => {
         const isHumanBoat = item.player[PLAYER.HUMAN].filled;
         if (item.box === box) {
           item.player[PLAYER.COMPUTER].shot = isHumanBoat
@@ -457,6 +457,14 @@ function App() {
   const resetGame = () => {
     window.location.reload();
   };
+
+  const onClickBoxOnHumanBoard = ({ box }: BOARD_BOX_ITEM) => {
+    if (gameReady) {
+      onClickBoxToShotHandler({ box });
+    } else {
+      onClickToSetBoatHandler();
+    }
+  }
 
   if (computerWins) {
     return <div className='flex'>
@@ -527,35 +535,15 @@ function App() {
                 {turn === PLAYER.COMPUTER && <div className='absolute inset-0 w-full h-full bg-white bg-opacity-80 flex items-center justify-center'>
                   Computer is thinking
                 </div>}
-                {board.map((r, rowKey) => {
-                  return <div key={rowKey} className='flex'>
-                    {r.map((c: any) => <div
-                      className='flex'
-                      key={c.label}
-                      data-position={
-                        `{ "col": ${c.col}, "row": ${c.row}, "box": ${c.box} }`
-                      }
-                      onMouseOver={() => onMouseOverToSetBoatHandler(c)}
-                      onClick={() => gameReady
-                        ? onClickBoxToShotHandler({ box: c.box })
-                        : onClickToSetBoatHandler()
-                      }
-                    >
-                      <div
-                        className={[
-                          "w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col",
-                          c.player[PLAYER.HUMAN].shot === SHOT_VALUE.TOUCH ? 'border-red-400 border-2 cursor-not-allowed' : '',
-                          c.player[PLAYER.HUMAN].shot === SHOT_VALUE.WATER ? 'border-blue-400 border-2' : '',
-                          c.player[PLAYER.COMPUTER].shot === SHOT_VALUE.TOUCH ? 'bg-red-400' : '',
-                          c.over && !isConflict && boatToSet ? 'bg-slate-200' : '',
-                          c.over && isConflict && boatToSet ? 'bg-red-200 !cursor-not-allowed' : '',
-                          !hideBoats && c.player[PLAYER.HUMAN].filled ? 'bg-blue-500' : '',
-                          hideBoats && c.player[PLAYER.HUMAN].filled ? 'bg-blue-50' : '',
-                        ].join(' ')}
-                      >{c.label}</div>
-                    </div>)}
-                  </div>
-                })}
+
+                <HumanBoard
+                  board={board}
+                  isConflict={isConflict}
+                  onMouseOver={onMouseOverToSetBoatHandler}
+                  onClick={onClickBoxOnHumanBoard}
+                  boatToSet={boatToSet}
+                  hideBoats={hideBoats}
+                />
               </div>
               {gameReady && !counterState && <div>
                 <div className='w-full flex items-start'>
@@ -635,7 +623,7 @@ function App() {
         </div>
         {showComputerBoats && <div>
           <h2>Computer bddoard</h2>
-          <Board board={board} ItemComponent={ComputerBoardItem} />
+          <ComputerBoard board={board} />
           <div>
 
           </div>

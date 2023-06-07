@@ -1,2 +1,2 @@
-export { default as Board } from "./board.component";
-export { default as ComputerBoardItem } from "./computer-board-item.component";
+export { default as ComputerBoard } from "./computer-board.component";
+export { default as HumanBoard } from "./human-board.component";
