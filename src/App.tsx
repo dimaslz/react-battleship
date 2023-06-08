@@ -501,7 +501,7 @@ function App() {
 								<p>
 									Here your boats! Click on one of them and (the color will turn
 									to orange), and move the mouse to on the Board in the left.
-									Press <code className="font-console">space</code> bar to
+									Press <code className="font-console text-slate-600">space</code> bar to
 									change the orientation. Once you have desired where you want
 									to sert your boat, click on the box in the board and back here
 									to get other boat.
@@ -511,8 +511,8 @@ function App() {
 								{boatsForPlayer?.map((boat: any, boatKey: number) => (
 									<div
 										className={[
-											'relative',
-											boat.done ? 'cursor-not-allowed' : '',
+											'relative text-white uppercase',
+											boat.done ? 'cursor-not-allowed' : 'hover:cursor-pointer group',
 										].join(' ')}
 										key={boatKey}
 										onClick={() => onClickBoatHandler(boat, boatKey)}
@@ -526,8 +526,9 @@ function App() {
 													<div
 														className={[
 															'w-[50px] h-[50px] border',
-															boat.pending ? 'bg-orange-200' : 'bg-blue-600',
-															boat.done ? 'bg-green-200' : 'bg-blue-600',
+															boat.pending ? 'bg-orange-200' : '',
+															boat.done ? 'bg-green-200' : '',
+															!boat.pending && !boat.done ? 'bg-blue-600 group-hover:bg-blue-800' : '',
 														].join(' ')}
 														key={squareKey}
 													></div>
