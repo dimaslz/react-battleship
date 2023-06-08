@@ -8,7 +8,7 @@ import { useBoard, useGame } from '@/hooks';
 import { WelcomeLayout } from '@/layouts';
 import { createArray, generateItems } from '@/methods';
 import { BOARD_BOX_ITEM, BOAT } from '@/types';
-import { randomNumber } from '@/utils';
+import { randomNumber, wait } from '@/utils';
 
 let boatsForPlayer = structuredClone(
 	BOATS.map((b) => ({
@@ -219,20 +219,15 @@ function App() {
 	}, [playersAreReady]);
 
 	const onClickBoxToShotHandler = useCallback(
-		async ({ box }: any) => {
-			const alreadyFired = items.find(
-				(item) => item.box === box && item.player[PLAYER.HUMAN].shot,
-			);
-			if (alreadyFired) return;
+		async (_item: BOARD_BOX_ITEM) => {
+			if (_item.player[PLAYER.HUMAN].shot) return;
 
-			const successShot = items.find((item) => {
-				return item.box === box && item.player[PLAYER.COMPUTER].filled;
-			});
+			const successShot = _item.player[PLAYER.COMPUTER].filled;
 
 			updateItems((prevItems: BOARD_BOX_ITEM[]) => {
 				return prevItems.map((item: BOARD_BOX_ITEM) => {
 					const isComputerBoat = item.player[PLAYER.COMPUTER].filled;
-					if (item.box === box) {
+					if (item.box === _item.box) {
 						item.player[PLAYER.HUMAN].shot = {
 							value: isComputerBoat
 								? SHOT_VALUE.TOUCH
@@ -245,7 +240,7 @@ function App() {
 				});
 			});
 
-			await new Promise((resolve) => setTimeout(() => resolve(null), 500));
+			await wait(500);
 
 			if (successShot) {
 				setShotResult({
@@ -259,7 +254,7 @@ function App() {
 				});
 			}
 
-			await new Promise((resolve) => setTimeout(() => resolve(null), 1000));
+			await wait(1000);
 
 			setShotResult(null);
 			setTurn(PLAYER.COMPUTER);
@@ -274,7 +269,7 @@ function App() {
 	}, []);
 
 	const computerTurnAction = useCallback(async () => {
-		await new Promise((resolve) => setTimeout(() => resolve(null), 1000));
+		await wait(1000);
 
 		const allowedBoxes = items.filter(
 			(item) => !item.player[PLAYER.COMPUTER].shot,
@@ -310,7 +305,7 @@ function App() {
 			});
 		});
 
-		await new Promise((resolve) => setTimeout(() => resolve(null), 500));
+		await wait(500);
 
 		setTurn(PLAYER.HUMAN);
 
@@ -326,7 +321,7 @@ function App() {
 			});
 		}
 
-		await new Promise((resolve) => setTimeout(() => resolve(null), 1000));
+		await wait(1000);
 
 		setShotResult(null);
 	}, [items]);
@@ -339,13 +334,13 @@ function App() {
 
 	const runCounter = useCallback(async () => {
 		setCounterState(String(gameCounter));
-		await new Promise((resolve) => setTimeout(() => resolve(null), 1000));
+		await wait(1000);
 
 		if (gameCounter === 1) {
 			setGameCounter(0);
 			setCounterState('goooo!');
 
-			await new Promise((resolve) => setTimeout(() => resolve(null), 500));
+			await wait(500);
 			setCounterState('');
 
 			randomTurn();
@@ -368,9 +363,9 @@ function App() {
 		window.location.reload();
 	};
 
-	const onClickBoxOnHumanBoard = ({ box }: BOARD_BOX_ITEM) => {
+	const onClickBoxOnHumanBoard = (item: BOARD_BOX_ITEM) => {
 		if (gameReady) {
-			onClickBoxToShotHandler({ box });
+			onClickBoxToShotHandler(item);
 		} else {
 			onClickToSetBoatHandler();
 		}
