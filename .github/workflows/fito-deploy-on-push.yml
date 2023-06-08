@@ -1,0 +1,147 @@
+---
+  name: "DEPLOY"
+  on: 
+    workflow_dispatch: {}
+    push: 
+      branches: 
+        - "main"
+      paths-ignore: 
+        - ".github/workflows/fito-deploy-on-pull-request.yml"
+        - "**/*.md"
+  concurrency: 
+    group: "${{ github.workflow }}-${{ github.ref }}"
+    cancel-in-progress: false
+  env: 
+    SSH_USER: "${{ secrets.FITO_ENV_CONNECTION_USER }}"
+    SSH_KEY: "${{ secrets.FITO_ENV_CONNECTION_PRIVATE_KEY }}"
+    SSH_HOST: "${{ secrets.FITO_ENV_CONNECTION_HOST }}"
+    ATTEMPTS: "${{ github.run_attempt }}"
+  jobs: 
+    install-dependencies: 
+      name: "install dependencies"
+      runs-on: "ubuntu-latest"
+      steps: 
+        - 
+          name: "Checkout under $GITHUB_WORKSPACE"
+          uses: "actions/checkout@master"
+          with: 
+            ref: "main"
+        - 
+          name: "Set up NodeJS"
+          uses: "actions/setup-node@master"
+          with: 
+            node-version: "16.19.0"
+        - 
+          name: "Install yarn"
+          run: "npm install -g yarn"
+        - 
+          name: "Install dependencies"
+          run: "yarn install"
+        - 
+          name: "Cache"
+          uses: "actions/cache@main"
+          with: 
+            path: "./*"
+            key: "${{ github.sha }}-cache"
+    build-application: 
+      name: "build application"
+      runs-on: "ubuntu-latest"
+      needs: "install-dependencies"
+      steps: 
+        - 
+          name: "Set up NodeJS"
+          uses: "actions/setup-node@master"
+          with: 
+            node-version: "16.19.0"
+        - 
+          name: "Cache"
+          uses: "actions/cache@main"
+          with: 
+            path: "./*"
+            key: "${{ github.sha }}-cache"
+        - 
+          name: "Build application"
+          run: "yarn build"
+        - 
+          name: "Cache"
+          uses: "actions/cache@main"
+          with: 
+            path: "./*\n./dist\npackage.json\npublic"
+            key: "${{ github.sha }}-cache"
+    create-and-push-docker-image: 
+      name: "create and push docker image"
+      runs-on: "ubuntu-latest"
+      needs: "build-application"
+      steps: 
+        - 
+          name: "Cache"
+          uses: "actions/cache@main"
+          with: 
+            path: "./*\n./dist\npackage.json\npublic"
+            key: "${{ github.sha }}-cache"
+        - 
+          name: "Build docker image"
+          run: "wget https://statics.dimaslz.dev/fito/docker/dockerfile-static.docker.tmpl -O Dockerfile.tmpl\n      export ARGS=\"\"\n      export SOURCE=\"./dist\"\n      export FILES=\"COPY package.json /app/package.json\nCOPY public /app/public\"\n      envsubst < Dockerfile.tmpl > Dockerfile\n      docker build .  -t ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_image"
+        - 
+          name: "prepare connection"
+          run: "mkdir -p ~/.ssh/\necho \"$SSH_KEY\" > ~/.ssh/prod.key\nchmod 600 ~/.ssh/prod.key\ncat >>~/.ssh/config <<END\nHost prod\n  HostName $SSH_HOST\n  User $SSH_USER\n  IdentityFile ~/.ssh/prod.key\n  StrictHostKeyChecking no\nEND"
+        - 
+          name: "Cache"
+          uses: "actions/cache@main"
+          with: 
+            path: "./*\n./dist\npackage.json\npublic"
+            key: "${{ github.sha }}-cache"
+        - 
+          name: "Push image"
+          run: "docker save ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_image | bzip2 | ssh prod 'docker load'"
+    run-image-and-clean: 
+      name: "run image and clean"
+      runs-on: "ubuntu-latest"
+      needs: "create-and-push-docker-image"
+      steps: 
+        - 
+          name: "Cache"
+          uses: "actions/cache@main"
+          with: 
+            path: "./*\n./dist\npackage.json\npublic"
+            key: "${{ github.sha }}-cache"
+        - 
+          name: "prepare connection"
+          run: "mkdir -p ~/.ssh/\necho \"$SSH_KEY\" > ~/.ssh/prod.key\nchmod 600 ~/.ssh/prod.key\ncat >>~/.ssh/config <<END\nHost prod\n  HostName $SSH_HOST\n  User $SSH_USER\n  IdentityFile ~/.ssh/prod.key\n  StrictHostKeyChecking no\nEND"
+        - 
+          name: "get current currentContainerId"
+          run: "currentContainerId=`ssh prod \"docker ps --format=\\\"{{.Names}} {{.ID}}\\\" | grep \\\"react-battleship.dimaslz.dev\\\" || echo \\\"\\\"\"` && currentContainerId=`echo $currentContainerId | grep -Po \"\\s.*?$\" | tr -d \"\\n\" || echo \"\"` && echo \"currentContainerId=$currentContainerId\" >> $GITHUB_ENV"
+        - 
+          name: "get current currentImageId"
+          run: "currentImageId=`ssh prod \"docker images --format=\\\"{{.Repository}} {{.ID}}\\\" | grep \\\"react-battleship.dimaslz.dev\\\" || echo \\\"\\\"\"` && currentImageId=`echo $currentImageId | grep -Po \"\\s(.*?$)\" | tr -d \"\\n\" || echo \"\"` && echo \"currentImageId=$currentImageId\" >> $GITHUB_ENV"
+        - 
+          name: "get current currentContainerGithubHash"
+          run: "currentContainerGithubHash=`ssh prod \"docker ps --format=\\\"{{.Names}} {{.ID}}\\\" | grep \\\"react-battleship.dimaslz.dev\\\" || echo \\\"\\\"\"` && currentContainerGithubHash=`echo $currentContainerGithubHash | grep -Po \"^.+?\\.\" || echo \"\"` && echo \"currentContainerGithubHash=$currentContainerGithubHash\" >> $GITHUB_ENV"
+        - 
+          name: "run"
+          run: "newContainerID=`ssh prod \"docker run --name ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_container   -d ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_image\"` && echo \"newContainerID=$newContainerID\" >> $GITHUB_ENV"
+        - 
+          name: "get container IP"
+          run: "newContainerIP=`ssh prod \"docker inspect -f \\\"{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}\\\" ${{ env.newContainerID }}\"` && echo \"newContainerIP=$newContainerIP\" >> $GITHUB_ENV"
+        - 
+          name: "get container PORT"
+          run: "newContainerPort=`ssh prod \"docker container ls | grep \\\"${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production\\\" | grep -Po \\\"\\d+/tcp \\\" | grep -Po \\\"\\d+\\\"\"` && echo \"newContainerPort=$newContainerPort\" >> $GITHUB_ENV"
+        - 
+          name: "Container is not running"
+          if: "${{ failure() }}"
+          run: "echo \"container is not running\" && exit 1"
+        - 
+          name: "setup nginx config"
+          run: "wget https://statics.dimaslz.dev/fito/nginx/static-config.nginx.tmpl -O nginx.tmpl\n\texport SERVER_NAME=\"react-battleship.dimaslz.dev\"\n\texport SERVER_URL=\"http://${{ env.newContainerIP }}:${{ env.newContainerPort }}\"\n\tenvsubst < nginx.tmpl > react-battleship.dimaslz.dev\n\tscp react-battleship.dimaslz.dev prod:/etc/nginx/sites-enabled/react-battleship.dimaslz.dev\n\tssh prod \"nginx -t && systemctl restart nginx\""
+        - 
+          name: "Container is not running"
+          if: "${{ failure() }}"
+          run: "echo \"container is not running\" && ssh prod \"docker rm -f ${{ env.newContainerID }}\" && exit 1"
+        - 
+          name: "Delete previews containers"
+          if: "${{ success() }}"
+          run: "[ ! -z \"${{ env.currentContainerId }}\" ] && ssh prod \"docker rm -f ${{ env.currentContainerId }}\" || echo \"\""
+        - 
+          name: "Delete previews images"
+          if: "${{ success() }}"
+          run: "[ ! -z \"${{ env.currentContainerId }}\" ] && ssh prod \"docker rmi -f ${{ env.currentImageId }}\" || echo \"\""
