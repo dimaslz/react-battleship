@@ -10,4 +10,9 @@ export default defineConfig({
 		// since parsing CSS is slow
 		css: true,
 	},
+	resolve: {
+		alias: {
+			'@': path.resolve(__dirname, './src'),
+		},
+	},
 });

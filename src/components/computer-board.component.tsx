@@ -1,5 +1,5 @@
-import { PLAYER, SHOT_VALUE } from '../constants';
-import { BOARD_ROW } from '../types';
+import { PLAYER, SHOT_VALUE } from '@/constants';
+import { BOARD_ROW } from '@/types';
 
 type Props = {
 	board: BOARD_ROW[];

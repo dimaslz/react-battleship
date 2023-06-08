@@ -1,4 +1,5 @@
-import { BOARD_SIZE } from '../constants';
+import { BOARD_SIZE } from '@/constants';
+
 import { createArray } from '.';
 
 const setVerticalBoatPosition = (box: number, boatSize: number) => {

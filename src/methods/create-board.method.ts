@@ -1,5 +1,5 @@
-import { BOARD_SIZE } from '../constants';
-import { BOARD_BOX_ITEM, BOARD_ROW } from '../types';
+import { BOARD_SIZE } from '@/constants';
+import { BOARD_BOX_ITEM, BOARD_ROW } from '@/types';
 
 const createBoard = (items: BOARD_BOX_ITEM[]): BOARD_ROW[] => {
 	let cols: BOARD_BOX_ITEM[] = [];

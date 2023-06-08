@@ -2,13 +2,13 @@ import './App.css';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ComputerBoard, HumanBoard } from './components';
-import WelcomeLayout from './components/welcome-layout.component';
-import { BOARD_SIZE, BOATS, PLAYER, SHOT_VALUE } from './constants';
-import { useBoard, useGame } from './hooks';
-import { createArray, generateItems } from './methods';
-import { BOARD_BOX_ITEM, TPLAYER_TYPE } from './types';
-import { randomNumber } from './utils';
+import { ComputerBoard, HumanBoard } from '@/components';
+import { BOARD_SIZE, BOATS, PLAYER, SHOT_VALUE } from '@/constants';
+import { useBoard, useGame } from '@/hooks';
+import { WelcomeLayout } from '@/layouts';
+import { createArray, generateItems } from '@/methods';
+import { BOARD_BOX_ITEM, TPLAYER_TYPE } from '@/types';
+import { randomNumber } from '@/utils';
 
 let boatsForPlayer = structuredClone(
 	BOATS.map((b) => ({

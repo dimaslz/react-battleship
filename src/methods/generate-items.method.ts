@@ -1,5 +1,6 @@
-import { BOARD_SIZE, LETTERS, PLAYER } from '../constants';
-import { BOARD_BOX_ITEM } from '../types';
+import { BOARD_SIZE, LETTERS, PLAYER } from '@/constants';
+import { BOARD_BOX_ITEM } from '@/types';
+
 import { createArray } from '.';
 
 const generateItems = (): BOARD_BOX_ITEM[] => {

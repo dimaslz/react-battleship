@@ -1,9 +1,9 @@
 import { useCallback, useRef } from 'react';
 
-import { ORIENTATION } from '../constants';
-import { setHorizontalBoatPosition, setVerticalBoatPosition } from '../methods';
-import { BOARD_BOX_ITEM, TORIENTATION } from '../types';
-import { randomNumber } from '../utils';
+import { ORIENTATION } from '@/constants';
+import { setHorizontalBoatPosition, setVerticalBoatPosition } from '@/methods';
+import { BOARD_BOX_ITEM, TORIENTATION } from '@/types';
+import { randomNumber } from '@/utils';
 
 type Props = {
 	setBoxesOver: (arr: number[]) => void;

@@ -1,4 +1,4 @@
-import { BOAT, TORIENTATION, TPLAYER_TYPE, TSHOT_VALUE } from '../types';
+import { BOAT, TORIENTATION, TPLAYER_TYPE, TSHOT_VALUE } from '@/types';
 
 export const BOARD_SIZE = 10;
 export const LETTERS = 'ABCDEFGHIJ';
