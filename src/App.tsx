@@ -7,12 +7,12 @@ import { BOARD_SIZE, BOATS, PLAYER, SHOT_VALUE } from '@/constants';
 import { useBoard, useGame } from '@/hooks';
 import { WelcomeLayout } from '@/layouts';
 import { createArray, generateItems } from '@/methods';
-import { BOARD_BOX_ITEM, BOAT } from '@/types';
+import { BOARD_BOX_ITEM, BOAT, BoatForPlayer, CursorPosition, TSHOT_VALUE } from '@/types';
 import { randomNumber, wait } from '@/utils';
 
-let boatsForPlayer = structuredClone(
-	BOATS.map((b) => ({
-		...b,
+let boatsForPlayer: BoatForPlayer[] = structuredClone(
+	BOATS.map((boat) => ({
+		...boat,
 		pending: false,
 		done: false,
 	})),
@@ -40,9 +40,9 @@ function App() {
 	const [counterState, setCounterState] = useState<string>('');
 	const [hideBoats, setHideBoats] = useState<boolean>(false);
 
-	const [boatToSet, setBoatToSet] = useState<any | null>(null);
-	const [cursorPosition, setCursorPosition] = useState<any | null>(null);
-	const [shotResult, setShotResult] = useState<any | null>(null);
+	const [boatToSet, setBoatToSet] = useState<{ boat: BoatForPlayer; key: number; } | null>(null);
+	const [cursorPosition, setCursorPosition] = useState<CursorPosition | null>(null);
+	const [shotResult, setShotResult] = useState<{ type: TSHOT_VALUE; content: string; } | null>(null);
 	const { history, setBoatPosition, switchOrientation, randomOrientation } = useGame({
 		setBoxesOver,
 		items,
@@ -63,17 +63,18 @@ function App() {
 		return computerIsReady && humanIsReady;
 	}, [items]);
 
-	const isConflict = useMemo(() => {
-		return (
+	const isConflict = useMemo<boolean>(() => {
+		return !!(
 			boatToSet &&
-			items.some((i: any) => {
-				return i.player[PLAYER.HUMAN].filled && boxesOver.includes(i.box);
+			items.some((item) => {
+				return item.player[PLAYER.HUMAN].filled && boxesOver.includes(item.box);
 			})
 		);
 	}, [boxesOver, items, boatToSet]);
 
 	const onKeydownHandler = useCallback(
-		async ($event: any) => {
+		async ($event: KeyboardEvent) => {
+			console.log("$event", $event);
 			if ($event.code === 'Space') {
 				switchOrientation();
 
@@ -144,7 +145,7 @@ function App() {
 	}, [gameStarted]);
 
 	const onMouseOverToSetBoatHandler = useCallback(
-		({ box, row }: any) => {
+		({ box, row }: BOARD_BOX_ITEM) => {
 			if (!boatToSet) return;
 
 			setCursorPosition({ box, row, boat: boatToSet.boat.squares });
@@ -197,16 +198,15 @@ function App() {
 		});
 	}, [boxesOver, boatToSet, playerBoatsDone]);
 
-	const onClickBoatHandler = useCallback((boat: any, key: number) => {
+	const onClickBoatHandler = useCallback((boat: BoatForPlayer, key: number) => {
 		if (boat.done) return;
 
 		setBoatToSet({ boat, key });
 
-		boatsForPlayer = boatsForPlayer.map((b: any) => ({
-			...b,
-			pending: false,
-		}));
-		boatsForPlayer[key].pending = true;
+		boatsForPlayer = boatsForPlayer.map((boatForPlayer, boatKey) => {
+			boatForPlayer.pending = key === boatKey;
+			return boatForPlayer;
+		});
 	}, []);
 
 	const onClickShowComputerBoatsHandler = useCallback(() => {
@@ -471,10 +471,9 @@ function App() {
 
 								<HumanBoard
 									board={board}
-									isConflict={isConflict}
+									disableClick={isConflict && !!boatToSet}
 									onMouseOver={onMouseOverToSetBoatHandler}
 									onClick={onClickBoxOnHumanBoard}
-									boatToSet={boatToSet}
 									hideBoats={hideBoats}
 								/>
 							</div>
@@ -518,7 +517,7 @@ function App() {
 								</p>
 							</div>
 							<div className="w-auto space-y-4">
-								{boatsForPlayer?.map((boat: any, boatKey: number) => (
+								{boatsForPlayer?.map((boat, boatKey: number) => (
 									<div
 										className={[
 											'relative text-white uppercase',

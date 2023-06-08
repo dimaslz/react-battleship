@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef } from 'react';
 
 import { ORIENTATION, PLAYER } from '@/constants';
 import { setHorizontalBoatPosition, setVerticalBoatPosition } from '@/methods';
-import { BOARD_BOX_ITEM, HISTORY, TORIENTATION } from '@/types';
+import { BOARD_BOX_ITEM, CursorPosition, HISTORY, TORIENTATION } from '@/types';
 import { randomNumber } from '@/utils';
 
 type Props = {
@@ -21,7 +21,7 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 	}, [orientation]);
 
 	const setBoatPosition = useCallback(
-		({ box, row, boat }: any) => {
+		({ box, row, boat }: CursorPosition) => {
 			const horizontal = orientation.current === ORIENTATION.HORIZONTAL;
 			const vertical = orientation.current === ORIENTATION.VERTICAL;
 
