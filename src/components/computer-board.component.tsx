@@ -16,7 +16,6 @@ const ComputerBoard = ({ board }: Props) => {
 								<div
 									className={[
 										'w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed flex-col',
-										box.player[PLAYER.COMPUTER].filled ? 'bg-slate-200' : '',
 										box.player[PLAYER.COMPUTER].shot?.value === SHOT_VALUE.TOUCH
 											? 'border-red-400 border-2'
 											: '',
@@ -25,7 +24,7 @@ const ComputerBoard = ({ board }: Props) => {
 											: '',
 										box.player[PLAYER.HUMAN].shot?.value === SHOT_VALUE.TOUCH
 											? 'bg-red-400'
-											: '',
+											: box.player[PLAYER.COMPUTER].filled ? 'bg-slate-200' : '',
 									].join(' ')}
 								>
 									{box.label}
