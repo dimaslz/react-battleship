@@ -4,12 +4,12 @@ import { createArray } from '.';
 
 const setHorizontalBoatPosition = (
 	box: number,
-	row: number,
 	boatSize: number,
 ) => {
 	let boxes = [box];
 	const even = Boolean(boatSize % 2);
 	const rest = Math.ceil(boatSize / 2);
+	const row = Math.ceil(box / BOARD_SIZE);
 
 	const boxLeft = even ? rest - 1 : rest;
 	const boxRight = even ? rest - 1 : rest - 1;
@@ -37,6 +37,7 @@ const setHorizontalBoatPosition = (
 			...createArray(outLeft + boxRight).map((_, k) => box + (k + 1)),
 		];
 	}
+
 	if (outRight > 0) {
 		boxes = [
 			...createArray(outRight + boxLeft)

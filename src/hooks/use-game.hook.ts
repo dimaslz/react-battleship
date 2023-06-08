@@ -21,14 +21,14 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 	}, [orientation]);
 
 	const setBoatPosition = useCallback(
-		({ box, row, boat }: CursorPosition) => {
+		({ box, boat }: CursorPosition) => {
 			const horizontal = orientation.current === ORIENTATION.HORIZONTAL;
 			const vertical = orientation.current === ORIENTATION.VERTICAL;
 
 			let boxes: number[] = [];
 
 			if (horizontal) {
-				boxes = setHorizontalBoatPosition(box, row, boat);
+				boxes = setHorizontalBoatPosition(box, boat);
 			}
 
 			if (vertical) {
