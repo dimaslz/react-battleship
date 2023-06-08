@@ -18,17 +18,17 @@ export const BOATS: BOAT[] = [
 	},
 ];
 
-export const ORIENTATION: { [key: string]: TORIENTATION } = {
+export const ORIENTATION: { [K in Uppercase<TORIENTATION>]: TORIENTATION } = {
 	VERTICAL: 'vertical',
 	HORIZONTAL: 'horizontal',
 };
 
-export const PLAYER: { [key: string]: TPLAYER_TYPE } = {
+export const PLAYER: { [K in Uppercase<TPLAYER_TYPE>]: TPLAYER_TYPE } = {
 	HUMAN: 'human',
 	COMPUTER: 'computer',
 };
 
-export const SHOT_VALUE: { [key: string]: TSHOT_VALUE } = {
+export const SHOT_VALUE: { [K in Uppercase<TSHOT_VALUE>]: TSHOT_VALUE } = {
 	TOUCH: 'touch',
 	WATER: 'water',
 };

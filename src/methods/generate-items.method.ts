@@ -1,11 +1,11 @@
-import { BOARD_SIZE, LETTERS, PLAYER } from '@/constants';
+import { BOARD_SIZE, LETTERS } from '@/constants';
 import { BOARD_BOX_ITEM } from '@/types';
 
 import { createArray } from '.';
 
 const generateItems = (): BOARD_BOX_ITEM[] => {
 	let row = 0;
-	return createArray(BOARD_SIZE * BOARD_SIZE).map((_, index) => {
+	return createArray(BOARD_SIZE * BOARD_SIZE).map((_, index): BOARD_BOX_ITEM => {
 		if (index % BOARD_SIZE === 0) {
 			row++;
 		}
@@ -19,11 +19,11 @@ const generateItems = (): BOARD_BOX_ITEM[] => {
 			label: `${LETTERS[col - 1]}${row}`,
 			over: false,
 			player: {
-				[PLAYER.HUMAN]: {
+				"human": {
 					filled: false,
 					shot: null,
 				},
-				[PLAYER.COMPUTER]: {
+				"computer": {
 					filled: false,
 					shot: null,
 				},
