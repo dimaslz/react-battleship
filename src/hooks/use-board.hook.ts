@@ -24,18 +24,18 @@ const useBoard = (initialItems: BOARD_BOX_ITEM[]) => {
 		}).length;
 	}, [items]);
 
-	const totalPosibleScores = BOATS.map((boat) => boat.squares).reduce(
+	const maxScores = BOATS.map((boat) => boat.squares).reduce(
 		(a, b) => a + b,
 		0,
 	);
 
 	const computerWins = useMemo(() => {
-		return computerScores === totalPosibleScores;
-	}, [computerScores, totalPosibleScores]);
+		return computerScores === maxScores;
+	}, [computerScores, maxScores]);
 
 	const humanWins = useMemo(() => {
-		return humanScores === totalPosibleScores;
-	}, [humanScores, totalPosibleScores]);
+		return humanScores === maxScores;
+	}, [humanScores, maxScores]);
 
 	return {
 		turn,
@@ -47,6 +47,7 @@ const useBoard = (initialItems: BOARD_BOX_ITEM[]) => {
 			human: humanScores,
 			computer: computerScores,
 		},
+		maxScores,
 		computerWins,
 		humanWins,
 	};

@@ -2,7 +2,7 @@ import './App.css';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ComputerBoard, HumanBoard } from '@/components';
+import { ComputerBoard, GameHistory, HumanBoard, ScoreBoard } from '@/components';
 import { BOARD_SIZE, BOATS, PLAYER, SHOT_VALUE } from '@/constants';
 import { useBoard, useGame } from '@/hooks';
 import { WelcomeLayout } from '@/layouts';
@@ -28,6 +28,7 @@ function App() {
 		board,
 		turn,
 		setTurn,
+		maxScores,
 	} = useBoard(
 		structuredClone(generateItems()),
 	);
@@ -42,9 +43,10 @@ function App() {
 	const [boatToSet, setBoatToSet] = useState<any | null>(null);
 	const [cursorPosition, setCursorPosition] = useState<any | null>(null);
 	const [shotResult, setShotResult] = useState<any | null>(null);
-	const { setBoatPosition, switchOrientation, randomOrientation } = useGame({
+	const { history, setBoatPosition, switchOrientation, randomOrientation } = useGame({
 		setBoxesOver,
 		updateItems,
+		items,
 	});
 
 	const playersAreReady = useMemo(() => {
@@ -487,19 +489,13 @@ function App() {
 											</span>
 										)}
 									</div>
-									<div>
-										<h3>history</h3>
-										<div className='w-full h-full'>
-											-..
-										</div>
-									</div>
 								</div>
 							)}
 						</div>
 					</div>
 
 					{!gameReady && (
-						<div className="w-full p-4">
+						<div className="w-full px-4">
 							<h2 className="text-4xl py-2">Boats</h2>
 							<div className="text-sm py-4">
 								<p>
@@ -559,13 +555,12 @@ function App() {
 						</div>
 					)}
 					{gameReady && (
-						<div className="w-full p-4">
+						<div className="w-full px-4">
 							<h2 className="text-4xl py-2">Scores</h2>
 
-							<div className="w-auto space-y-4">
-								<div>You: {scores.human}</div>
-								<div>Computer: {scores.computer}</div>
-							</div>
+							<ScoreBoard scores={scores} maxScores={maxScores} />
+
+							<GameHistory history={history} />
 						</div>
 					)}
 				</div>

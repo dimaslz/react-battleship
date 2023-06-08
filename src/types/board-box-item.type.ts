@@ -2,7 +2,7 @@ import { TPLAYER_TYPE, TSHOT_VALUE } from ".";
 
 type PlayerStatus = {
 	shot: null | {
-		value: null | TSHOT_VALUE;
+		value: TSHOT_VALUE;
 		date: number;
 	};
 	filled: boolean;

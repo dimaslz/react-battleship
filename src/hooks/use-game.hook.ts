@@ -1,16 +1,17 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
-import { ORIENTATION } from '@/constants';
+import { ORIENTATION, PLAYER } from '@/constants';
 import { setHorizontalBoatPosition, setVerticalBoatPosition } from '@/methods';
-import { BOARD_BOX_ITEM, TORIENTATION } from '@/types';
+import { BOARD_BOX_ITEM, HISTORY, TORIENTATION } from '@/types';
 import { randomNumber } from '@/utils';
 
 type Props = {
 	setBoxesOver: (arr: number[]) => void;
 	updateItems: React.Dispatch<React.SetStateAction<BOARD_BOX_ITEM[]>>;
+	items: BOARD_BOX_ITEM[];
 };
 
-const useGameHook = ({ setBoxesOver, updateItems }: Props) => {
+const useGameHook = ({ setBoxesOver, updateItems, items }: Props) => {
 	const orientation = useRef<TORIENTATION>(ORIENTATION.HORIZONTAL);
 
 	const switchOrientation = useCallback(() => {
@@ -59,11 +60,42 @@ const useGameHook = ({ setBoxesOver, updateItems }: Props) => {
 		];
 	};
 
+	const history = useMemo<HISTORY[]>(() => {
+		return items.filter((item) => {
+			const computerShots = item.player[PLAYER.COMPUTER].shot;
+			const humanShots = item.player[PLAYER.HUMAN].shot;
+
+			return computerShots || humanShots;
+		}).reduce<HISTORY[]>((accumulator, currentItem) => {
+			const playerShot = currentItem.player[PLAYER.HUMAN].shot;
+			if (playerShot) {
+				accumulator.push({
+					...currentItem,
+					date: playerShot.date,
+					value: playerShot.value,
+					who: PLAYER.HUMAN,
+				});
+			}
+
+			const computerShot = currentItem.player[PLAYER.COMPUTER].shot;
+			if (computerShot) {
+				accumulator.push({
+					...currentItem,
+					date: computerShot.date,
+					value: computerShot.value,
+					who: PLAYER.COMPUTER,
+				});
+			}
+			return accumulator;
+		}, []);
+	}, [items]);
+
 	return {
 		setBoatPosition,
 		switchOrientation,
 		randomOrientation,
 		orientation: orientation.current,
+		history,
 	};
 };
 
