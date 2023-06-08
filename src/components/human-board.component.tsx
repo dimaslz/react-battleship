@@ -20,7 +20,6 @@ const HumanBoard = ({
 }: Props) => {
 	return (
 		<>
-			<pre>isConflict: {JSON.stringify(isConflict)}</pre>
 			{board.map((row, rowKey) => {
 				return (
 					<div key={rowKey} className="flex">

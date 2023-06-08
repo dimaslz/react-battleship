@@ -101,6 +101,8 @@ function App() {
 
 		const boats: BOAT[] = [...BOATS];
 
+		let _items = items;
+
 		while (boats.length) {
 			const boat = boats.pop();
 			if (!boat) break;
@@ -111,8 +113,8 @@ function App() {
 
 			const boxes = setBoatPosition({ box, row, boat: boat.squares });
 
-			const conflict = items.some((i: any) => {
-				return i.player[PLAYER.COMPUTER].filled && boxes.includes(i.box);
+			const conflict = _items.some((item) => {
+				return item.player[PLAYER.COMPUTER].filled && boxes.includes(item.box);
 			});
 
 			if (conflict) {
@@ -121,16 +123,16 @@ function App() {
 				continue;
 			}
 
-			updateItems((prevItems) => {
-				return prevItems.map((item) => {
-					if (boxes.includes(item.box)) {
-						item.player[PLAYER.COMPUTER].filled = true;
-					}
+			_items = _items.map((item) => {
+				if (boxes.includes(item.box)) {
+					item.player[PLAYER.COMPUTER].filled = true;
+				}
 
-					return item;
-				});
+				return item;
 			});
 		}
+
+		updateItems(_items);
 	}, [gameStarted]);
 
 	const onMouseOverToSetBoatHandler = useCallback(
@@ -155,22 +157,13 @@ function App() {
 		if (playerBoatsDone) return;
 		if (!boatToSet) return;
 
-		updateItems((prevItems: any) => {
-			return prevItems.map((i: any) => {
-				if (boxesOver.includes(i.box)) {
-					return {
-						...i,
-						player: {
-							...i.player,
-							[PLAYER.HUMAN]: {
-								...i.player[PLAYER.HUMAN],
-								filled: true,
-							},
-						},
-					};
+		updateItems((prevItems) => {
+			return prevItems.map((item) => {
+				if (boxesOver.includes(item.box)) {
+					item.player[PLAYER.HUMAN].filled = true;
 				}
 
-				return i;
+				return item;
 			});
 		});
 
@@ -493,6 +486,12 @@ function App() {
 												wait!, the computer is thinking
 											</span>
 										)}
+									</div>
+									<div>
+										<h3>history</h3>
+										<div className='w-full h-full'>
+											-..
+										</div>
 									</div>
 								</div>
 							)}
