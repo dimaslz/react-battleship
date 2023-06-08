@@ -7,11 +7,10 @@ import { randomNumber } from '@/utils';
 
 type Props = {
 	setBoxesOver: (arr: number[]) => void;
-	updateItems: React.Dispatch<React.SetStateAction<BOARD_BOX_ITEM[]>>;
 	items: BOARD_BOX_ITEM[];
 };
 
-const useGameHook = ({ setBoxesOver, updateItems, items }: Props) => {
+const useGameHook = ({ setBoxesOver, items }: Props) => {
 	const orientation = useRef<TORIENTATION>(ORIENTATION.HORIZONTAL);
 
 	const switchOrientation = useCallback(() => {
@@ -37,21 +36,10 @@ const useGameHook = ({ setBoxesOver, updateItems, items }: Props) => {
 			}
 
 			setBoxesOver(boxes);
-			updateItems((prevItems) => {
-				return prevItems.map((item) => {
-					if (boxes.includes(item.box)) {
-						item.over = true;
-					} else {
-						item.over = false;
-					}
-
-					return item;
-				});
-			});
 
 			return boxes;
 		},
-		[orientation, updateItems, setBoxesOver],
+		[orientation, setBoxesOver],
 	);
 
 	const randomOrientation = () => {

@@ -45,7 +45,6 @@ function App() {
 	const [shotResult, setShotResult] = useState<any | null>(null);
 	const { history, setBoatPosition, switchOrientation, randomOrientation } = useGame({
 		setBoxesOver,
-		updateItems,
 		items,
 	});
 
@@ -79,11 +78,18 @@ function App() {
 				switchOrientation();
 
 				if (cursorPosition) {
-					setBoatPosition(cursorPosition);
+					const boxes = setBoatPosition(cursorPosition);
+					updateItems((prevItems) => {
+						return prevItems.map((item) => {
+							item.over = boxes.includes(item.box);
+
+							return item;
+						});
+					});
 				}
 			}
 		},
-		[cursorPosition, setBoatPosition, switchOrientation],
+		[cursorPosition, setBoatPosition, switchOrientation, updateItems],
 	);
 
 	useEffect(() => {
@@ -142,9 +148,17 @@ function App() {
 			if (!boatToSet) return;
 
 			setCursorPosition({ box, row, boat: boatToSet.boat.squares });
-			setBoatPosition({ box, row, boat: boatToSet.boat.squares });
+			const boxes = setBoatPosition({ box, row, boat: boatToSet.boat.squares });
+
+			updateItems((prevItems) => {
+				return prevItems.map((item) => {
+					item.over = boxes.includes(item.box);
+
+					return item;
+				});
+			});
 		},
-		[setCursorPosition, setBoatPosition, boatToSet],
+		[setCursorPosition, setBoatPosition, updateItems, boatToSet],
 	);
 
 	const playerBoatsDone = useMemo(() => {
@@ -185,6 +199,7 @@ function App() {
 
 	const onClickBoatHandler = useCallback((boat: any, key: number) => {
 		if (boat.done) return;
+
 		setBoatToSet({ boat, key });
 
 		boatsForPlayer = boatsForPlayer.map((b: any) => ({
