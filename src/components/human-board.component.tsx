@@ -31,13 +31,13 @@ const HumanBoard = ({
 								onClick={() => onClick(item)}
 								className={[
 									'w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:cursor-pointer hover:border-slate-600 flex-col',
-									item.player[PLAYER.HUMAN].shot === SHOT_VALUE.TOUCH
-										? 'border-red-400 border-2 hover:cursor-not-allowed'
+									item.player[PLAYER.HUMAN].shot?.value === SHOT_VALUE.TOUCH
+										? 'border-red-400 border-2 hover:!cursor-not-allowed'
 										: '',
-									item.player[PLAYER.HUMAN].shot === SHOT_VALUE.WATER
-										? 'border-blue-400 border-2 hover:cursor-not-allowed'
+									item.player[PLAYER.HUMAN].shot?.value === SHOT_VALUE.WATER
+										? 'border-blue-400 border-2 hover:!cursor-not-allowed'
 										: '',
-									item.player[PLAYER.COMPUTER].shot === SHOT_VALUE.TOUCH
+									item.player[PLAYER.COMPUTER].shot?.value === SHOT_VALUE.TOUCH
 										? 'bg-red-400'
 										: '',
 									item.over && !isConflict && boatToSet ? 'bg-slate-200' : '',

@@ -45,13 +45,13 @@ function App() {
 	);
 	const humanScores = useMemo(() => {
 		return items.filter((item) => {
-			return item.player[PLAYER.HUMAN].shot === SHOT_VALUE.TOUCH;
+			return item.player[PLAYER.HUMAN].shot?.value === SHOT_VALUE.TOUCH;
 		}).length;
 	}, [items]);
 
 	const computerScores = useMemo(() => {
 		return items.filter((item) => {
-			return item.player[PLAYER.COMPUTER].shot === SHOT_VALUE.TOUCH;
+			return item.player[PLAYER.COMPUTER].shot?.value === SHOT_VALUE.TOUCH;
 		}).length;
 	}, [items]);
 
@@ -264,9 +264,12 @@ function App() {
 				return prevItems.map((item: BOARD_BOX_ITEM) => {
 					const isComputerBoat = item.player[PLAYER.COMPUTER].filled;
 					if (item.box === box) {
-						item.player[PLAYER.HUMAN].shot = isComputerBoat
-							? SHOT_VALUE.TOUCH
-							: SHOT_VALUE.WATER;
+						item.player[PLAYER.HUMAN].shot = {
+							value: isComputerBoat
+								? SHOT_VALUE.TOUCH
+								: SHOT_VALUE.WATER,
+							date: Date.now(),
+						};
 					}
 
 					return item;
@@ -326,9 +329,12 @@ function App() {
 			return prevItems.map((item: BOARD_BOX_ITEM) => {
 				const isHumanBoat = item.player[PLAYER.HUMAN].filled;
 				if (item.box === box) {
-					item.player[PLAYER.COMPUTER].shot = isHumanBoat
-						? SHOT_VALUE.TOUCH
-						: SHOT_VALUE.WATER;
+					item.player[PLAYER.COMPUTER].shot = {
+						value: isHumanBoat
+							? SHOT_VALUE.TOUCH
+							: SHOT_VALUE.WATER,
+						date: Date.now(),
+					};
 				}
 
 				return item;
