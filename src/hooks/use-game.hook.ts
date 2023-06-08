@@ -87,7 +87,8 @@ const useGameHook = ({ setBoxesOver, updateItems, items }: Props) => {
 				});
 			}
 			return accumulator;
-		}, []);
+		}, [])
+			.sort((prevItem, nextItem) => prevItem.date > nextItem.date ? - 1 : 1);
 	}, [items]);
 
 	return {
