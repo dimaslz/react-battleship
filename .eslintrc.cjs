@@ -1,14 +1,39 @@
 module.exports = {
-  env: { browser: true, es2020: true },
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:react-hooks/recommended',
-  ],
-  parser: '@typescript-eslint/parser',
-  parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  plugins: ['react-refresh'],
-  rules: {
-    'react-refresh/only-export-components': 'warn',
-  },
-}
+	env: {
+		browser: true,
+		es2020: true,
+		es6: true,
+		mocha: true,
+		node: true,
+	},
+	globals: {
+		sinon: true,
+		expect: true,
+		browser: true,
+		global: true,
+	},
+	extends: [
+		'eslint:recommended',
+		'plugin:@typescript-eslint/recommended',
+		'plugin:react-hooks/recommended',
+		'plugin:@typescript-eslint/recommended',
+	],
+	parser: '@typescript-eslint/parser',
+	parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
+	plugins: ['react-refresh', 'react', 'simple-import-sort'],
+	rules: {
+		'react-refresh/only-export-components': 'warn',
+		'no-duplicate-imports': 2,
+		'simple-import-sort/imports': 'error',
+		'simple-import-sort/exports': 'error',
+		'comma-dangle': [2, 'always-multiline'],
+		'comma-style': [2, 'last'],
+		semi: 2,
+		'space-before-function-paren': [0, 'always'],
+		'space-in-parens': [0, 'never'],
+		'brace-style': [2, '1tbs', { allowSingleLine: true }],
+		'rest-spread-spacing': 2,
+		indent: 'off',
+		'no-multiple-empty-lines': 'error',
+	},
+};

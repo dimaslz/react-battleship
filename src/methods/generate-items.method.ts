@@ -1,6 +1,6 @@
-import { createArray } from ".";
-import { BOARD_SIZE, LETTERS, PLAYER } from "../constants";
-import { BOARD_BOX_ITEM } from "../types";
+import { BOARD_SIZE, LETTERS, PLAYER } from '../constants';
+import { BOARD_BOX_ITEM } from '../types';
+import { createArray } from '.';
 
 const generateItems = (): BOARD_BOX_ITEM[] => {
 	let row = 0;
@@ -9,7 +9,7 @@ const generateItems = (): BOARD_BOX_ITEM[] => {
 			row++;
 		}
 
-		const col = (index % BOARD_SIZE + 1);
+		const col = (index % BOARD_SIZE) + 1;
 
 		return {
 			box: index + 1,
@@ -29,6 +29,6 @@ const generateItems = (): BOARD_BOX_ITEM[] => {
 			},
 		};
 	});
-}
+};
 
 export default generateItems;

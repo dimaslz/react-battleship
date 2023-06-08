@@ -1,10 +1,10 @@
-import { BOARD_SIZE } from "../constants";
-import { BOARD_BOX_ITEM, BOARD_ROW } from "../types";
+import { BOARD_SIZE } from '../constants';
+import { BOARD_BOX_ITEM, BOARD_ROW } from '../types';
 
 const createBoard = (items: BOARD_BOX_ITEM[]): BOARD_ROW[] => {
 	let cols: BOARD_BOX_ITEM[] = [];
 	return items.reduce((row: BOARD_ROW[], item: BOARD_BOX_ITEM) => {
-		if ((item.col % BOARD_SIZE) === 0) {
+		if (item.col % BOARD_SIZE === 0) {
 			cols.push(item);
 			row.push(cols);
 
@@ -14,7 +14,7 @@ const createBoard = (items: BOARD_BOX_ITEM[]): BOARD_ROW[] => {
 		}
 
 		return row;
-	}, [])
-}
+	}, []);
+};
 
 export default createBoard;
