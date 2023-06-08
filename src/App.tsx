@@ -7,7 +7,7 @@ import { BOARD_SIZE, BOATS, PLAYER, SHOT_VALUE } from '@/constants';
 import { useBoard, useGame } from '@/hooks';
 import { WelcomeLayout } from '@/layouts';
 import { createArray, generateItems } from '@/methods';
-import { BOARD_BOX_ITEM, TPLAYER_TYPE } from '@/types';
+import { BOARD_BOX_ITEM, BOAT } from '@/types';
 import { randomNumber } from '@/utils';
 
 let boatsForPlayer = structuredClone(
@@ -26,6 +26,8 @@ function App() {
 		items,
 		updateItems,
 		board,
+		turn,
+		setTurn,
 	} = useBoard(
 		structuredClone(generateItems()),
 	);
@@ -37,7 +39,6 @@ function App() {
 	const [counterState, setCounterState] = useState<string>('');
 	const [hideBoats, setHideBoats] = useState<boolean>(false);
 
-	const [turn, setTurn] = useState<TPLAYER_TYPE | null>(null);
 	const [boatToSet, setBoatToSet] = useState<any | null>(null);
 	const [cursorPosition, setCursorPosition] = useState<any | null>(null);
 	const [shotResult, setShotResult] = useState<any | null>(null);
@@ -96,22 +97,21 @@ function App() {
 	useEffect(() => {
 		if (!gameStarted) return;
 		if (mounted) return;
-		updateItems(structuredClone(generateItems()));
-
 		mounted = true;
 
-		const boats: any[] = [...BOATS];
-		let _items = structuredClone(items);
+		const boats: BOAT[] = [...BOATS];
 
 		while (boats.length) {
 			const boat = boats.pop();
+			if (!boat) break;
+
 			const box = randomNumber(1, BOARD_SIZE * BOARD_SIZE);
 			const row = Math.ceil(box / BOARD_SIZE);
 			randomOrientation();
 
-			const boxes = setBoatPosition({ box, row, boat: boat?.squares });
+			const boxes = setBoatPosition({ box, row, boat: boat.squares });
 
-			const conflict = _items.some((i: any) => {
+			const conflict = items.some((i: any) => {
 				return i.player[PLAYER.COMPUTER].filled && boxes.includes(i.box);
 			});
 
@@ -121,25 +121,16 @@ function App() {
 				continue;
 			}
 
-			_items = _items.map((i: any) => {
-				if (boxes.includes(i.box)) {
-					return {
-						...i,
-						player: {
-							...i.player,
-							[PLAYER.COMPUTER]: {
-								...i.player[PLAYER.COMPUTER],
-								filled: true,
-							},
-						},
-					};
-				}
+			updateItems((prevItems) => {
+				return prevItems.map((item) => {
+					if (boxes.includes(item.box)) {
+						item.player[PLAYER.COMPUTER].filled = true;
+					}
 
-				return i;
+					return item;
+				});
 			});
 		}
-
-		updateItems(_items);
 	}, [gameStarted]);
 
 	const onMouseOverToSetBoatHandler = useCallback(

@@ -2,10 +2,11 @@ import { useMemo, useState } from 'react';
 
 import { BOATS, PLAYER, SHOT_VALUE } from '@/constants';
 import { createBoard } from '@/methods';
-import { BOARD_BOX_ITEM } from '@/types';
+import { BOARD_BOX_ITEM, TPLAYER_TYPE } from '@/types';
 
 const useBoard = (initialItems: BOARD_BOX_ITEM[]) => {
 	const [items, updateItems] = useState<BOARD_BOX_ITEM[]>(initialItems);
+	const [turn, setTurn] = useState<TPLAYER_TYPE | null>(null);
 
 	const board = useMemo(() => {
 		return createBoard(items);
@@ -37,6 +38,8 @@ const useBoard = (initialItems: BOARD_BOX_ITEM[]) => {
 	}, [humanScores, totalPosibleScores]);
 
 	return {
+		turn,
+		setTurn,
 		items,
 		updateItems,
 		board,
