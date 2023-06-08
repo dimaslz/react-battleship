@@ -19,7 +19,14 @@ let boatsForPlayer = structuredClone(
 );
 
 function App() {
-	const { items, updateItems, board } = useBoard(
+	const {
+		scores,
+		computerWins,
+		humanWins,
+		items,
+		updateItems,
+		board,
+	} = useBoard(
 		structuredClone(generateItems()),
 	);
 	const [boxesOver, setBoxesOver] = useState<number[]>([]);
@@ -38,30 +45,6 @@ function App() {
 		setBoxesOver,
 		updateItems,
 	});
-
-	const totalPosibleScores = BOATS.map((boat) => boat.squares).reduce(
-		(a, b) => a + b,
-		0,
-	);
-	const humanScores = useMemo(() => {
-		return items.filter((item) => {
-			return item.player[PLAYER.HUMAN].shot?.value === SHOT_VALUE.TOUCH;
-		}).length;
-	}, [items]);
-
-	const computerScores = useMemo(() => {
-		return items.filter((item) => {
-			return item.player[PLAYER.COMPUTER].shot?.value === SHOT_VALUE.TOUCH;
-		}).length;
-	}, [items]);
-
-	const computerWins = useMemo(() => {
-		return computerScores === totalPosibleScores;
-	}, [computerScores]);
-
-	const humanWins = useMemo(() => {
-		return humanScores === totalPosibleScores;
-	}, [humanScores]);
 
 	const playersAreReady = useMemo(() => {
 		const boatsLeng = BOATS.map((boat) => boat.squares).reduce(
@@ -590,8 +573,8 @@ function App() {
 							<h2 className="text-4xl py-2">Scores</h2>
 
 							<div className="w-auto space-y-4">
-								<div>You: {humanScores}</div>
-								<div>Computer: {computerScores}</div>
+								<div>You: {scores.human}</div>
+								<div>Computer: {scores.computer}</div>
 							</div>
 						</div>
 					)}

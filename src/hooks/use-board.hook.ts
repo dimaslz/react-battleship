@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 
+import { BOATS, PLAYER, SHOT_VALUE } from '@/constants';
 import { createBoard } from '@/methods';
 import { BOARD_BOX_ITEM } from '@/types';
 
@@ -10,10 +11,41 @@ const useBoard = (initialItems: BOARD_BOX_ITEM[]) => {
 		return createBoard(items);
 	}, [items]);
 
+	const humanScores = useMemo(() => {
+		return items.filter((item) => {
+			return item.player[PLAYER.HUMAN].shot?.value === SHOT_VALUE.TOUCH;
+		}).length;
+	}, [items]);
+
+	const computerScores = useMemo(() => {
+		return items.filter((item) => {
+			return item.player[PLAYER.COMPUTER].shot?.value === SHOT_VALUE.TOUCH;
+		}).length;
+	}, [items]);
+
+	const totalPosibleScores = BOATS.map((boat) => boat.squares).reduce(
+		(a, b) => a + b,
+		0,
+	);
+
+	const computerWins = useMemo(() => {
+		return computerScores === totalPosibleScores;
+	}, [computerScores, totalPosibleScores]);
+
+	const humanWins = useMemo(() => {
+		return humanScores === totalPosibleScores;
+	}, [humanScores, totalPosibleScores]);
+
 	return {
 		items,
 		updateItems,
 		board,
+		scores: {
+			human: humanScores,
+			computer: computerScores,
+		},
+		computerWins,
+		humanWins,
 	};
 };
 
