@@ -32,3 +32,8 @@ export const SHOT_VALUE: { [K in Uppercase<TSHOT_VALUE>]: TSHOT_VALUE } = {
 	TOUCH: 'touch',
 	WATER: 'water',
 };
+
+export const MAX_SCORES = BOATS.map((boat) => boat.squares).reduce(
+	(a, b) => a + b,
+	0,
+);

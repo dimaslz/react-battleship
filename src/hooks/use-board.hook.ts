@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { BOATS, PLAYER, SHOT_VALUE } from '@/constants';
+import { MAX_SCORES, PLAYER, SHOT_VALUE } from '@/constants';
 import { createBoard } from '@/methods';
 import { BOARD_BOX_ITEM, TPLAYER_TYPE } from '@/types';
 
@@ -24,18 +24,13 @@ const useBoard = (initialItems: BOARD_BOX_ITEM[]) => {
 		}).length;
 	}, [items]);
 
-	const maxScores = BOATS.map((boat) => boat.squares).reduce(
-		(a, b) => a + b,
-		0,
-	);
-
 	const computerWins = useMemo(() => {
-		return computerScores === maxScores;
-	}, [computerScores, maxScores]);
+		return computerScores === MAX_SCORES;
+	}, [computerScores]);
 
 	const humanWins = useMemo(() => {
-		return humanScores === maxScores;
-	}, [humanScores, maxScores]);
+		return humanScores === MAX_SCORES;
+	}, [humanScores]);
 
 	return {
 		turn,
@@ -47,7 +42,7 @@ const useBoard = (initialItems: BOARD_BOX_ITEM[]) => {
 			human: humanScores,
 			computer: computerScores,
 		},
-		maxScores,
+		maxScores: MAX_SCORES,
 		computerWins,
 		humanWins,
 	};
