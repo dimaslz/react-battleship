@@ -98,7 +98,6 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 		setBoatPosition,
 		switchOrientation,
 		randomOrientation,
-		orientation: orientation.current,
 		history,
 		playersAreReady,
 	};
