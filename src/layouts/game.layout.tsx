@@ -67,6 +67,17 @@ function GameLayout() {
 		);
 	}, [boxesOver, items, boatToSet]);
 
+	const playerBoatsDone = useMemo(() => {
+		const squares = BOATS.map((b) => b.squares).reduce((a, b) => a + b, 0);
+		return (
+			items.filter((i) => i.player[PLAYER.HUMAN].filled).length === squares
+		);
+	}, [items]);
+
+	const resetGame = () => {
+		window.location.reload();
+	};
+
 	const onKeydownHandler = useCallback(
 		async ($event: KeyboardEvent) => {
 			if ($event.code === 'Space') {
@@ -87,56 +98,6 @@ function GameLayout() {
 		[cursorPosition, setBoatPosition, switchOrientation, updateItems],
 	);
 
-	useEffect(() => {
-		document.addEventListener('keydown', onKeydownHandler);
-
-		return () => {
-			document.removeEventListener('keydown', onKeydownHandler);
-		};
-	}, [onKeydownHandler]);
-
-	// INIT
-	let mounted = false;
-	useEffect(() => {
-		if (mounted) return;
-		mounted = true;
-
-		const boats: BOAT[] = [...BOATS];
-
-		let _items = items;
-
-		while (boats.length) {
-			const boat = boats.pop();
-			if (!boat) break;
-
-			const box = randomNumber(1, BOARD_SIZE * BOARD_SIZE);
-			const row = Math.ceil(box / BOARD_SIZE);
-			randomOrientation();
-
-			const boxes = setBoatPosition({ box, row, boat: boat.squares });
-
-			const conflict = _items.some((item) => {
-				return item.player[PLAYER.COMPUTER].filled && boxes.includes(item.box);
-			});
-
-			if (conflict) {
-				boats.push(boat);
-
-				continue;
-			}
-
-			_items = _items.map((item) => {
-				if (boxes.includes(item.box)) {
-					item.player[PLAYER.COMPUTER].filled = true;
-				}
-
-				return item;
-			});
-		}
-
-		updateItems(_items);
-	}, []);
-
 	const onMouseOverBoard = useCallback(
 		({ box, row }: BOARD_BOX_ITEM) => {
 			if (!boatToSet) return;
@@ -154,13 +115,6 @@ function GameLayout() {
 		},
 		[setCursorPosition, setBoatPosition, updateItems, boatToSet],
 	);
-
-	const playerBoatsDone = useMemo(() => {
-		const squares = BOATS.map((b) => b.squares).reduce((a, b) => a + b, 0);
-		return (
-			items.filter((i) => i.player[PLAYER.HUMAN].filled).length === squares
-		);
-	}, [items]);
 
 	const onClickToSetBoatHandler = useCallback(() => {
 		if (isConflict) return;
@@ -330,12 +284,6 @@ function GameLayout() {
 		setShotResult(null);
 	}, [items]);
 
-	useEffect(() => {
-		if (turn === PLAYER.COMPUTER) {
-			computerTurnAction();
-		}
-	}, [turn]);
-
 	const runCounter = useCallback(async () => {
 		updateGameCounterLabel(String(counter.value));
 		await wait(1000);
@@ -357,16 +305,6 @@ function GameLayout() {
 		}
 	}, [gameReady, counter]);
 
-	useEffect(() => {
-		if (!gameReady || counter.value === 0) return;
-
-		runCounter();
-	}, [gameReady, runCounter, counter]);
-
-	const resetGame = () => {
-		window.location.reload();
-	};
-
 	const onClickBoardBox = (item: BOARD_BOX_ITEM) => {
 		if (gameReady) {
 			onClickBoxToShotHandler(item);
@@ -374,6 +312,68 @@ function GameLayout() {
 			onClickToSetBoatHandler();
 		}
 	};
+
+	useEffect(() => {
+		document.addEventListener('keydown', onKeydownHandler);
+
+		return () => {
+			document.removeEventListener('keydown', onKeydownHandler);
+		};
+	}, [onKeydownHandler]);
+
+	// INIT
+	let mounted = false;
+	useEffect(() => {
+		if (mounted) return;
+		mounted = true;
+
+		const boats: BOAT[] = [...BOATS];
+
+		let _items = items;
+
+		while (boats.length) {
+			const boat = boats.pop();
+			if (!boat) break;
+
+			const box = randomNumber(1, BOARD_SIZE * BOARD_SIZE);
+			const row = Math.ceil(box / BOARD_SIZE);
+			randomOrientation();
+
+			const boxes = setBoatPosition({ box, row, boat: boat.squares });
+
+			const conflict = _items.some((item) => {
+				return item.player[PLAYER.COMPUTER].filled && boxes.includes(item.box);
+			});
+
+			if (conflict) {
+				boats.push(boat);
+
+				continue;
+			}
+
+			_items = _items.map((item) => {
+				if (boxes.includes(item.box)) {
+					item.player[PLAYER.COMPUTER].filled = true;
+				}
+
+				return item;
+			});
+		}
+
+		updateItems(_items);
+	}, []);
+
+	useEffect(() => {
+		if (turn === PLAYER.COMPUTER) {
+			computerTurnAction();
+		}
+	}, [turn]);
+
+	useEffect(() => {
+		if (!gameReady || counter.value === 0) return;
+
+		runCounter();
+	}, [gameReady, runCounter, counter]);
 
 	if (computerWins) {
 		return <ComputerWinsLayout onClickReset={resetGame} />;
