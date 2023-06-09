@@ -1,5 +1,5 @@
-import BOARD_BOX_ITEM from './board-box-item.type';
+import BoardBoxItem from './board-box-item.type';
 
-type BOARD_ROW = BOARD_BOX_ITEM[];
+type BoardRow = BoardBoxItem[];
 
-export default BOARD_ROW;
+export default BoardRow;

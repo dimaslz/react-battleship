@@ -1,9 +1,9 @@
 import { BOARD_SIZE } from '@/constants';
-import { BOARD_BOX_ITEM, BOARD_ROW } from '@/types';
+import { BoardBoxItem, BoardRow } from '@/types';
 
-const createBoard = (items: BOARD_BOX_ITEM[]): BOARD_ROW[] => {
-	let cols: BOARD_BOX_ITEM[] = [];
-	return items.reduce((row: BOARD_ROW[], item: BOARD_BOX_ITEM) => {
+const createBoard = (items: BoardBoxItem[]): BoardRow[] => {
+	let cols: BoardBoxItem[] = [];
+	return items.reduce((row: BoardRow[], item: BoardBoxItem) => {
 		if (item.col % BOARD_SIZE === 0) {
 			cols.push(item);
 			row.push(cols);

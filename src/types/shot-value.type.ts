@@ -1,3 +1,3 @@
-type TSHOT_VALUE = 'touch' | 'water';
+type Shot = 'touch' | 'water';
 
-export default TSHOT_VALUE;
+export default Shot;

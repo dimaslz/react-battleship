@@ -2,16 +2,16 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { BOATS, ORIENTATION, PLAYER } from '@/constants';
 import { setHorizontalBoatPosition, setVerticalBoatPosition } from '@/methods';
-import { BOARD_BOX_ITEM, CursorPosition, HISTORY, TORIENTATION } from '@/types';
+import { BoardBoxItem, CursorPosition, History, Orientation } from '@/types';
 import { randomNumber } from '@/utils';
 
 type Props = {
 	setBoxesOver: (arr: number[]) => void;
-	items: BOARD_BOX_ITEM[];
+	items: BoardBoxItem[];
 };
 
 const useGameHook = ({ setBoxesOver, items }: Props) => {
-	const orientation = useRef<TORIENTATION>(ORIENTATION.HORIZONTAL);
+	const orientation = useRef<Orientation>(ORIENTATION.HORIZONTAL);
 	const [gameReady, setGameReady] = useState<boolean>(false);
 	const [gameCounterValue, updateGameCounterValue] = useState<number>(5);
 	const [gameCounterLabel, updateGameCounterLabel] = useState<string>('');
@@ -66,13 +66,13 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 		];
 	};
 
-	const history = useMemo<HISTORY[]>(() => {
+	const history = useMemo<History[]>(() => {
 		return items.filter((item) => {
 			const computerShots = item.player[PLAYER.COMPUTER].shot;
 			const humanShots = item.player[PLAYER.HUMAN].shot;
 
 			return computerShots || humanShots;
-		}).reduce<HISTORY[]>((accumulator, currentItem) => {
+		}).reduce<History[]>((accumulator, currentItem) => {
 			const playerShot = currentItem.player[PLAYER.HUMAN].shot;
 			if (playerShot) {
 				accumulator.push({

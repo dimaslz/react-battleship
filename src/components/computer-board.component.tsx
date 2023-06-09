@@ -1,8 +1,8 @@
 import { PLAYER, SHOT_VALUE } from '@/constants';
-import { BOARD_ROW } from '@/types';
+import { BoardRow } from '@/types';
 
 type Props = {
-	board: BOARD_ROW[];
+	board: BoardRow[];
 };
 
 const ComputerBoard = ({ board }: Props) => {

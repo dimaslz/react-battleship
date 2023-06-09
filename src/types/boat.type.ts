@@ -1,6 +1,6 @@
-type BOAT = {
+type Boat = {
 	label: string;
 	squares: number;
 };
 
-export default BOAT;
+export default Boat;

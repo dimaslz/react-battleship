@@ -2,18 +2,18 @@ import { useState } from "react";
 
 import { HumanBoard } from "@/components";
 import { PLAYER } from "@/constants";
-import { BOARD_BOX_ITEM, BOARD_ROW, TPLAYER_TYPE } from "@/types";
+import { BoardBoxItem, BoardRow, Player } from "@/types";
 
 type Props = {
 	onMouseLeave: () => void;
-	onMouseOver: (item: BOARD_BOX_ITEM) => void;
-	onClick: (item: BOARD_BOX_ITEM) => void;
-	board: BOARD_ROW[];
+	onMouseOver: (item: BoardBoxItem) => void;
+	onClick: (item: BoardBoxItem) => void;
+	board: BoardRow[];
 	counter: {
 		value: number;
 		label: string;
 	};
-	turn: TPLAYER_TYPE | null;
+	turn: Player | null;
 	disableClick: boolean;
 	gameReady: boolean;
 }

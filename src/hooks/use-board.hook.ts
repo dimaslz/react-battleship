@@ -2,11 +2,11 @@ import { useMemo, useState } from 'react';
 
 import { MAX_SCORES, PLAYER, SHOT_VALUE } from '@/constants';
 import { createBoard } from '@/methods';
-import { BOARD_BOX_ITEM, TPLAYER_TYPE } from '@/types';
+import { BoardBoxItem, Player } from '@/types';
 
-const useBoard = (initialItems: BOARD_BOX_ITEM[]) => {
-	const [items, updateItems] = useState<BOARD_BOX_ITEM[]>(initialItems);
-	const [turn, setTurn] = useState<TPLAYER_TYPE | null>(null);
+const useBoard = (initialItems: BoardBoxItem[]) => {
+	const [items, updateItems] = useState<BoardBoxItem[]>(initialItems);
+	const [turn, setTurn] = useState<Player | null>(null);
 
 	const board = useMemo(() => {
 		return createBoard(items);

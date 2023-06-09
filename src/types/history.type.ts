@@ -1,9 +1,9 @@
-import { BOARD_BOX_ITEM, TPLAYER_TYPE, TSHOT_VALUE } from ".";
+import { BoardBoxItem, Player, Shot } from ".";
 
-type HISTORY = BOARD_BOX_ITEM & {
-	who: TPLAYER_TYPE;
+type History = BoardBoxItem & {
+	who: Player;
 	date: number;
-	value: TSHOT_VALUE;
+	value: Shot;
 }
 
-export default HISTORY;
+export default History;

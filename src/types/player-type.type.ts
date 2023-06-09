@@ -1,3 +1,3 @@
-type TPLAYER_TYPE = 'human' | 'computer';
+type Player = 'human' | 'computer';
 
-export default TPLAYER_TYPE;
+export default Player;

@@ -1,20 +1,20 @@
-import { TPLAYER_TYPE, TSHOT_VALUE } from ".";
+import { Player, Shot } from ".";
 
 type PlayerStatus = {
 	shot: null | {
-		value: TSHOT_VALUE;
+		value: Shot;
 		date: number;
 	};
 	filled: boolean;
 }
 
-type BOARD_BOX_ITEM = {
+type BoardBoxItem = {
 	box: number;
 	col: number;
 	row: number;
 	label: string;
 	over: boolean;
-	player: { [key in TPLAYER_TYPE]: PlayerStatus };
+	player: { [key in Player]: PlayerStatus };
 };
 
-export default BOARD_BOX_ITEM;
+export default BoardBoxItem;

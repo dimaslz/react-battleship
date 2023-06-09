@@ -1,10 +1,10 @@
-export type { default as BOARD_BOX_ITEM } from './board-box-item.type';
-export type { default as BOARD_ROW } from './board-item.type';
-export type { default as BOAT } from './boat.type';
+export type { default as BoardBoxItem } from './board-box-item.type';
+export type { default as BoardRow } from './board-item.type';
+export type { default as Boat } from './boat.type';
 export type { default as BoatForPlayer } from './boat-for-player.type';
 export type { default as CursorPosition } from './cursor-position.type';
-export type { default as HISTORY } from './history.type';
-export type { default as TORIENTATION } from './orientation.type';
-export type { default as TPLAYER_TYPE } from './player-type.type';
-export type { default as TSHOT_VALUE } from './shot-value.type';
+export type { default as History } from './history.type';
+export type { default as Orientation } from './orientation.type';
+export type { default as Player } from './player-type.type';
+export type { default as Shot } from './shot-value.type';
 export type { default as ValueOf } from './value-of.type';

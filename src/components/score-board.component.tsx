@@ -1,7 +1,7 @@
-import { TPLAYER_TYPE } from "@/types";
+import { Player } from "@/types";
 
 type Scores = {
-	[K in TPLAYER_TYPE]: number;
+	[K in Player]: number;
 };
 
 type Props = {

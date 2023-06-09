@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 
 import { BOARD_SIZE, LETTERS, MAX_SCORES, PLAYER, SHOT_VALUE } from "@/constants";
 import items from "@/mocks/items.json";
-import { BOARD_BOX_ITEM, BOARD_ROW } from "@/types";
+import { BoardBoxItem, BoardRow } from "@/types";
 import { randomNumber } from "@/utils";
 
 import useBoard from "./use-board.hook";
@@ -39,7 +39,7 @@ describe("[Hooks]: useBoard", () => {
 			test("and each row 10 columns", async () => {
 				const { board } = expected.current;
 
-				board.forEach((row: BOARD_ROW) => {
+				board.forEach((row: BoardRow) => {
 					expect(row).toHaveLength(10);
 				});
 			});
@@ -47,8 +47,8 @@ describe("[Hooks]: useBoard", () => {
 			test("each element should have the proper label", async () => {
 				const { board } = expected.current;
 
-				board.forEach((row: BOARD_ROW, rowKey: number) => {
-					row.forEach((element: BOARD_BOX_ITEM, elementKey) => {
+				board.forEach((row: BoardRow, rowKey: number) => {
+					row.forEach((element: BoardBoxItem, elementKey) => {
 						expect(element.label).toBe(`${LETTERS[elementKey]}${rowKey + 1}`);
 					});
 				});
@@ -97,7 +97,7 @@ describe("[Hooks]: useBoard", () => {
 		test("update items", () => {
 			const { updateItems, items } = expected.current;
 
-			updateItems((prevItems: BOARD_BOX_ITEM[]) => {
+			updateItems((prevItems: BoardBoxItem[]) => {
 				return prevItems.map((item) => {
 					if (item.box === box) {
 						item.player[PLAYER.COMPUTER].shot = {
@@ -110,7 +110,7 @@ describe("[Hooks]: useBoard", () => {
 				});
 			});
 
-			const item = items.find((_item: BOARD_BOX_ITEM) => _item.box === box);
+			const item = items.find((_item: BoardBoxItem) => _item.box === box);
 			expect(item.player).toStrictEqual({
 				computer: {
 					filled: false,
@@ -130,7 +130,7 @@ describe("[Hooks]: useBoard", () => {
 			const { board } = expected.current;
 
 			const row = Math.ceil(box / 10);
-			const item = board[row - 1].find((col: BOARD_BOX_ITEM) => col.box === box);
+			const item = board[row - 1].find((col: BoardBoxItem) => col.box === box);
 
 			expect(item.player).toStrictEqual({
 				computer: {

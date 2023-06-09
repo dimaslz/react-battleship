@@ -1,6 +1,6 @@
-import { BOAT } from ".";
+import { Boat } from ".";
 
-type BoatForPlayer = BOAT & {
+type BoatForPlayer = Boat & {
 	pending: boolean;
 	done: boolean;
 }

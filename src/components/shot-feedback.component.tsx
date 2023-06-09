@@ -1,8 +1,8 @@
 import { SHOT_VALUE } from "@/constants";
-import { TSHOT_VALUE } from "@/types";
+import { Shot } from "@/types";
 
 type Props = {
-	type: TSHOT_VALUE;
+	type: Shot;
 	content: string;
 }
 

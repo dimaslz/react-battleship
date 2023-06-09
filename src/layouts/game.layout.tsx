@@ -10,7 +10,7 @@ import {
 import { BOARD_SIZE, BOATS, PLAYER, SHOT_VALUE } from '@/constants';
 import { useBoard, useGame } from '@/hooks';
 import { generateItems } from '@/methods';
-import { BOARD_BOX_ITEM, BOAT, BoatForPlayer, CursorPosition, TSHOT_VALUE } from '@/types';
+import { BoardBoxItem, Boat, BoatForPlayer, CursorPosition, Shot } from '@/types';
 import { randomNumber, wait } from '@/utils';
 
 import { ComputerWinsLayout, HumanWinsLayout } from '.';
@@ -41,7 +41,7 @@ function GameLayout() {
 	const [showComputerBoats, setShowComputerBoats] = useState<boolean>(false);
 	const [boatToSet, setBoatToSet] = useState<{ boat: BoatForPlayer; key: number; } | null>(null);
 	const [cursorPosition, setCursorPosition] = useState<CursorPosition | null>(null);
-	const [shotResult, setShotResult] = useState<{ type: TSHOT_VALUE; content: string; } | null>(null);
+	const [shotResult, setShotResult] = useState<{ type: Shot; content: string; } | null>(null);
 	const {
 		setBoatPosition,
 		switchOrientation,
@@ -99,7 +99,7 @@ function GameLayout() {
 	);
 
 	const onMouseOverBoard = useCallback(
-		({ box, row }: BOARD_BOX_ITEM) => {
+		({ box, row }: BoardBoxItem) => {
 			if (!boatToSet) return;
 
 			setCursorPosition({ box, row, boat: boatToSet.boat.squares });
@@ -177,13 +177,13 @@ function GameLayout() {
 	}, [playersAreReady]);
 
 	const onClickBoxToShotHandler = useCallback(
-		async (_item: BOARD_BOX_ITEM) => {
+		async (_item: BoardBoxItem) => {
 			if (_item.player[PLAYER.HUMAN].shot) return;
 
 			const successShot = _item.player[PLAYER.COMPUTER].filled;
 
-			updateItems((prevItems: BOARD_BOX_ITEM[]) => {
-				return prevItems.map((item: BOARD_BOX_ITEM) => {
+			updateItems((prevItems: BoardBoxItem[]) => {
+				return prevItems.map((item: BoardBoxItem) => {
 					const isComputerBoat = item.player[PLAYER.COMPUTER].filled;
 					if (item.box === _item.box) {
 						item.player[PLAYER.HUMAN].shot = {
@@ -247,8 +247,8 @@ function GameLayout() {
 			return item.box === box && item.player[PLAYER.HUMAN].filled;
 		});
 
-		await updateItems((prevItems: BOARD_BOX_ITEM[]) => {
-			return prevItems.map((item: BOARD_BOX_ITEM) => {
+		await updateItems((prevItems: BoardBoxItem[]) => {
+			return prevItems.map((item: BoardBoxItem) => {
 				const isHumanBoat = item.player[PLAYER.HUMAN].filled;
 				if (item.box === box) {
 					item.player[PLAYER.COMPUTER].shot = {
@@ -305,7 +305,7 @@ function GameLayout() {
 		}
 	}, [gameReady, counter]);
 
-	const onClickBoardBox = (item: BOARD_BOX_ITEM) => {
+	const onClickBoardBox = (item: BoardBoxItem) => {
 		if (gameReady) {
 			onClickBoxToShotHandler(item);
 		} else {
@@ -327,7 +327,7 @@ function GameLayout() {
 		if (mounted) return;
 		mounted = true;
 
-		const boats: BOAT[] = [...BOATS];
+		const boats: Boat[] = [...BOATS];
 
 		let _items = items;
 

@@ -1,9 +1,9 @@
-import { BOAT, TORIENTATION, TPLAYER_TYPE, TSHOT_VALUE } from '@/types';
+import { Boat, Orientation, Player, Shot } from '@/types';
 
 export const BOARD_SIZE = 10;
 export const LETTERS = 'ABCDEFGHIJ';
 
-export const BOATS: BOAT[] = [
+export const BOATS: Boat[] = [
 	{
 		label: 'Battleship',
 		squares: 5,
@@ -18,17 +18,17 @@ export const BOATS: BOAT[] = [
 	},
 ];
 
-export const ORIENTATION: { [K in Uppercase<TORIENTATION>]: TORIENTATION } = {
+export const ORIENTATION: { [K in Uppercase<Orientation>]: Orientation } = {
 	VERTICAL: 'vertical',
 	HORIZONTAL: 'horizontal',
 };
 
-export const PLAYER: { [K in Uppercase<TPLAYER_TYPE>]: TPLAYER_TYPE } = {
+export const PLAYER: { [K in Uppercase<Player>]: Player } = {
 	HUMAN: 'human',
 	COMPUTER: 'computer',
 };
 
-export const SHOT_VALUE: { [K in Uppercase<TSHOT_VALUE>]: TSHOT_VALUE } = {
+export const SHOT_VALUE: { [K in Uppercase<Shot>]: Shot } = {
 	TOUCH: 'touch',
 	WATER: 'water',
 };

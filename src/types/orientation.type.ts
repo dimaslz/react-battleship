@@ -1,3 +1,3 @@
-type TORIENTATION = 'vertical' | 'horizontal';
+type Orientation = 'vertical' | 'horizontal';
 
-export default TORIENTATION;
+export default Orientation;

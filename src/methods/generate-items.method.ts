@@ -1,11 +1,11 @@
 import { BOARD_SIZE, LETTERS } from '@/constants';
-import { BOARD_BOX_ITEM } from '@/types';
+import { BoardBoxItem } from '@/types';
 
 import { createArray } from '.';
 
-const generateItems = (): BOARD_BOX_ITEM[] => {
+const generateItems = (): BoardBoxItem[] => {
 	let row = 0;
-	return createArray(BOARD_SIZE * BOARD_SIZE).map((_, index): BOARD_BOX_ITEM => {
+	return createArray(BOARD_SIZE * BOARD_SIZE).map((_, index): BoardBoxItem => {
 		if (index % BOARD_SIZE === 0) {
 			row++;
 		}

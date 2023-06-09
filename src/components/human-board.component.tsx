@@ -1,12 +1,12 @@
 import { PLAYER, SHOT_VALUE } from '@/constants';
-import { BOARD_BOX_ITEM, BOARD_ROW } from '@/types';
+import { BoardBoxItem,BoardRow } from '@/types';
 
 type Props = {
-	board: BOARD_ROW[];
+	board: BoardRow[];
 	hideBoats: boolean;
 	disableClick: boolean;
-	onMouseOver: (item: BOARD_BOX_ITEM) => void;
-	onClick: (item: BOARD_BOX_ITEM) => void;
+	onMouseOver: (item: BoardBoxItem) => void;
+	onClick: (item: BoardBoxItem) => void;
 };
 
 const HumanBoard = ({
@@ -21,7 +21,7 @@ const HumanBoard = ({
 			{board.map((row, rowKey) => {
 				return (
 					<div key={rowKey} className="flex">
-						{row.map((item: BOARD_BOX_ITEM) => (
+						{row.map((item: BoardBoxItem) => (
 							<div
 								key={item.label}
 								onMouseOver={() => onMouseOver(item)}
