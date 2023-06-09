@@ -74,7 +74,6 @@ function App() {
 
 	const onKeydownHandler = useCallback(
 		async ($event: KeyboardEvent) => {
-			console.log("$event", $event);
 			if ($event.code === 'Space') {
 				switchOrientation();
 
