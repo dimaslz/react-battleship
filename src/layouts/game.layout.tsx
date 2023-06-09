@@ -7,7 +7,7 @@ import { createArray, generateItems } from '@/methods';
 import { BOARD_BOX_ITEM, BOAT, BoatForPlayer, CursorPosition, TSHOT_VALUE } from '@/types';
 import { randomNumber, wait } from '@/utils';
 
-import { ComputerWinsLayout, HumanWinsLayout } from '.';
+import { ComputerWinsLayout, HumanWinsLayout, ShotFeedbackLayout } from '.';
 
 let boatsForPlayer: BoatForPlayer[] = structuredClone(
 	BOATS.map((boat) => ({
@@ -388,22 +388,7 @@ function GameLayout() {
 
 	return (
 		<>
-			{shotResult && (
-				<div className="absolute z-10 inset-0 flex items-center justify-center w-full h-full">
-					<div className="flex items-center justify-center flex-col w-[600px] bg-white">
-						<div
-							className={[
-								'text-4xl',
-								shotResult.type === SHOT_VALUE.WATER
-									? 'text-blue-400'
-									: 'text-green-400',
-							].join(' ')}
-						>
-							{shotResult.content}
-						</div>
-					</div>
-				</div>
-			)}
+			{shotResult && <ShotFeedbackLayout type={shotResult.type} content={shotResult.content} />}
 
 			<div>
 				<div className="flex">
