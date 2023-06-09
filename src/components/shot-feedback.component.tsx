@@ -6,7 +6,7 @@ type Props = {
 	content: string;
 }
 
-const ShotFeedbackLayout = ({ type, content }: Props) => {
+const ShotFeedback = ({ type, content }: Props) => {
 	return <div className="absolute z-10 inset-0 flex items-center justify-center w-full h-full">
 		<div className="flex items-center justify-center flex-col w-[600px] bg-white">
 			<div
@@ -23,4 +23,4 @@ const ShotFeedbackLayout = ({ type, content }: Props) => {
 	</div>;
 };
 
-export default ShotFeedbackLayout;
+export default ShotFeedback;

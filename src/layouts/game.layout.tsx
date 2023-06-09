@@ -1,13 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BoatSettings, ComputerBoard, GameHistory, HumanBoard, ScoreBoard } from '@/components';
+import {
+	BoatSettings,
+	ComputerBoard,
+	GameHistory,
+	HumanBoard,
+	ScoreBoard,
+	ShotFeedback,
+} from '@/components';
 import { BOARD_SIZE, BOATS, PLAYER, SHOT_VALUE } from '@/constants';
 import { useBoard, useGame } from '@/hooks';
 import { generateItems } from '@/methods';
 import { BOARD_BOX_ITEM, BOAT, BoatForPlayer, CursorPosition, TSHOT_VALUE } from '@/types';
 import { randomNumber, wait } from '@/utils';
 
-import { ComputerWinsLayout, HumanWinsLayout, ShotFeedbackLayout } from '.';
+import { ComputerWinsLayout, HumanWinsLayout } from '.';
 
 let boatsForPlayer: BoatForPlayer[] = structuredClone(
 	BOATS.map((boat) => ({
@@ -373,7 +380,7 @@ function GameLayout() {
 
 	return (
 		<>
-			{shotResult && <ShotFeedbackLayout type={shotResult.type} content={shotResult.content} />}
+			{shotResult && <ShotFeedback type={shotResult.type} content={shotResult.content} />}
 
 			<div>
 				<div className="flex">
