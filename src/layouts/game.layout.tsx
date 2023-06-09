@@ -4,10 +4,9 @@ import {
 	BoatSettings,
 	ComputerBoard,
 	GameHistory,
-	HumanBoard,
+	PlayerBoardView,
 	ScoreBoard,
-	ShotFeedback,
-} from '@/components';
+	ShotFeedback} from '@/components';
 import { BOARD_SIZE, BOATS, PLAYER, SHOT_VALUE } from '@/constants';
 import { useBoard, useGame } from '@/hooks';
 import { generateItems } from '@/methods';
@@ -40,15 +39,21 @@ function GameLayout() {
 	);
 	const [boxesOver, setBoxesOver] = useState<number[]>([]);
 	const [showComputerBoats, setShowComputerBoats] = useState<boolean>(false);
-	const [gameReady, setGameReady] = useState<boolean>(false);
-	const [gameCounter, setGameCounter] = useState<number>(5);
-	const [counterState, setCounterState] = useState<string>('');
-	const [hideBoats, setHideBoats] = useState<boolean>(false);
-
 	const [boatToSet, setBoatToSet] = useState<{ boat: BoatForPlayer; key: number; } | null>(null);
 	const [cursorPosition, setCursorPosition] = useState<CursorPosition | null>(null);
 	const [shotResult, setShotResult] = useState<{ type: TSHOT_VALUE; content: string; } | null>(null);
-	const { playersAreReady, history, setBoatPosition, switchOrientation, randomOrientation } = useGame({
+	const {
+		setBoatPosition,
+		switchOrientation,
+		randomOrientation,
+		setGameReady,
+		updateGameCounterValue,
+		updateGameCounterLabel,
+		gameReady,
+		playersAreReady,
+		history,
+		counter,
+	} = useGame({
 		setBoxesOver,
 		items,
 	});
@@ -132,7 +137,7 @@ function GameLayout() {
 		updateItems(_items);
 	}, []);
 
-	const onMouseOverToSetBoatHandler = useCallback(
+	const onMouseOverBoard = useCallback(
 		({ box, row }: BOARD_BOX_ITEM) => {
 			if (!boatToSet) return;
 
@@ -201,7 +206,7 @@ function GameLayout() {
 		setShowComputerBoats((prev: boolean) => !prev);
 	}, []);
 
-	const onMouseLeaveBoardHandler = useCallback(() => {
+	const onMouseLeaveBoard = useCallback(() => {
 		updateItems((prevItems) => {
 			return prevItems.map((i) => {
 				i.over = false;
@@ -332,15 +337,15 @@ function GameLayout() {
 	}, [turn]);
 
 	const runCounter = useCallback(async () => {
-		setCounterState(String(gameCounter));
+		updateGameCounterLabel(String(counter.value));
 		await wait(1000);
 
-		if (gameCounter === 1) {
-			setGameCounter(0);
-			setCounterState('goooo!');
+		if (counter.value === 1) {
+			updateGameCounterValue(0);
+			updateGameCounterLabel('goooo!');
 
 			await wait(500);
-			setCounterState('');
+			updateGameCounterLabel('');
 
 			randomTurn();
 
@@ -348,21 +353,21 @@ function GameLayout() {
 		}
 
 		if (gameReady) {
-			setGameCounter(gameCounter - 1);
+			updateGameCounterValue(counter.value - 1);
 		}
-	}, [gameReady, gameCounter]);
+	}, [gameReady, counter]);
 
 	useEffect(() => {
-		if (!gameReady || gameCounter === 0) return;
+		if (!gameReady || counter.value === 0) return;
 
 		runCounter();
-	}, [gameReady, runCounter, gameCounter]);
+	}, [gameReady, runCounter, counter]);
 
 	const resetGame = () => {
 		window.location.reload();
 	};
 
-	const onClickBoxOnHumanBoard = (item: BOARD_BOX_ITEM) => {
+	const onClickBoardBox = (item: BOARD_BOX_ITEM) => {
 		if (gameReady) {
 			onClickBoxToShotHandler(item);
 		} else {
@@ -386,75 +391,37 @@ function GameLayout() {
 				<div className="flex">
 					<div className="flex flex-col">
 						<h2 className="text-4xl py-2">Your board</h2>
-						<div>
-							<div
-								className="flex flex-col w-full justify-center items-center relative"
-								onMouseLeave={onMouseLeaveBoardHandler}
-							>
-								{counterState && (
-									<div className="absolute inset-0 w-full h-full bg-white bg-opacity-80 flex items-center justify-center">
-										{counterState && (
-											<div className="text-8xl">{counterState}</div>
-										)}
-									</div>
-								)}
-								{turn === PLAYER.COMPUTER && (
-									<div className="absolute inset-0 w-full h-full bg-white bg-opacity-80 flex items-center justify-center">
-										Computer is thinking
-									</div>
-								)}
-
-								<HumanBoard
-									board={board}
-									disableClick={isConflict && !!boatToSet}
-									onMouseOver={onMouseOverToSetBoatHandler}
-									onClick={onClickBoxOnHumanBoard}
-									hideBoats={hideBoats}
-								/>
-							</div>
-							{gameReady && !counterState && (
-								<div>
-									<div className="w-full flex items-start">
-										<button
-											onClick={() => setHideBoats((prev) => !prev)}
-											className="p-2 bg-blue-800 text-white hover:bg-blue-950"
-										>
-											{!hideBoats && <div>hide boats</div>}
-											{hideBoats && <div>show boats</div>}
-										</button>
-									</div>
-									<div className="w-full">
-										{turn === PLAYER.HUMAN && (
-											<span className="text-green-600">your turn</span>
-										)}
-										{turn === PLAYER.COMPUTER && (
-											<span className="text-red-600">
-												wait!, the computer is thinking
-											</span>
-										)}
-									</div>
-								</div>
-							)}
-						</div>
+						<PlayerBoardView
+							onClick={onClickBoardBox}
+							onMouseOver={onMouseOverBoard}
+							onMouseLeave={onMouseLeaveBoard}
+							counter={counter}
+							board={board}
+							gameReady={gameReady}
+							turn={turn}
+							disableClick={isConflict && !!boatToSet}
+						/>
 					</div>
 
-					{!gameReady && <BoatSettings
-						boats={boatsForPlayer}
-						onClickBoat={onClickBoatSettings}
-						onClickStartGame={onClickStartGame}
-						playerBoatsDone={playerBoatsDone}
-						playersAreReady={playersAreReady}
-					/>}
+					<div className='w-full'>
+						{!gameReady && <BoatSettings
+							boats={boatsForPlayer}
+							onClickBoat={onClickBoatSettings}
+							onClickStartGame={onClickStartGame}
+							playerBoatsDone={playerBoatsDone}
+							playersAreReady={playersAreReady}
+						/>}
 
-					{gameReady && (
-						<div className="w-full px-4">
-							<h2 className="text-4xl py-2">Scores</h2>
+						{gameReady && (
+							<div className="w-full px-4">
+								<h2 className="text-4xl py-2">Scores</h2>
 
-							<ScoreBoard scores={scores} maxScores={maxScores} />
+								<ScoreBoard scores={scores} maxScores={maxScores} />
 
-							<GameHistory history={history} />
-						</div>
-					)}
+								<GameHistory history={history} />
+							</div>
+						)}
+					</div>
 				</div>
 
 				<div className="flex w-full justify-start mt-12">
@@ -468,6 +435,7 @@ function GameLayout() {
 						{showComputerBoats && <span>hide computer boats</span>}
 					</button>
 				</div>
+
 				{showComputerBoats && (
 					<div>
 						<h2>Computer bddoard</h2>

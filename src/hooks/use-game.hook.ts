@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { BOATS, ORIENTATION, PLAYER } from '@/constants';
 import { setHorizontalBoatPosition, setVerticalBoatPosition } from '@/methods';
@@ -12,6 +12,9 @@ type Props = {
 
 const useGameHook = ({ setBoxesOver, items }: Props) => {
 	const orientation = useRef<TORIENTATION>(ORIENTATION.HORIZONTAL);
+	const [gameReady, setGameReady] = useState<boolean>(false);
+	const [gameCounterValue, updateGameCounterValue] = useState<number>(5);
+	const [gameCounterLabel, updateGameCounterLabel] = useState<string>('');
 
 	const switchOrientation = useCallback(() => {
 		orientation.current =
@@ -98,8 +101,16 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 		setBoatPosition,
 		switchOrientation,
 		randomOrientation,
+		setGameReady,
+		updateGameCounterValue,
+		updateGameCounterLabel,
+		gameReady,
 		history,
 		playersAreReady,
+		counter: {
+			value: gameCounterValue,
+			label: gameCounterLabel,
+		},
 	};
 };
 
