@@ -33,6 +33,7 @@ const PlayerBoardView = ({
 	return (
 		<div>
 			<div
+				data-testid="player-board-view"
 				className="flex flex-col w-full justify-center items-center relative"
 				onMouseLeave={onMouseLeave}
 			>
