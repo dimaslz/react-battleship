@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
 
-import { ORIENTATION, PLAYER } from '@/constants';
+import { BOATS, ORIENTATION, PLAYER } from '@/constants';
 import { setHorizontalBoatPosition, setVerticalBoatPosition } from '@/methods';
 import { BOARD_BOX_ITEM, CursorPosition, HISTORY, TORIENTATION } from '@/types';
 import { randomNumber } from '@/utils';
@@ -19,6 +19,21 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 				? ORIENTATION.VERTICAL
 				: ORIENTATION.HORIZONTAL;
 	}, [orientation]);
+
+	const playersAreReady = useMemo(() => {
+		const boatsLeng = BOATS.map((boat) => boat.squares).reduce(
+			(accumulator, current) => accumulator + current,
+			0,
+		);
+		const computerIsReady =
+			items.filter((item) => item.player[PLAYER.COMPUTER]?.filled).length ===
+			boatsLeng;
+		const humanIsReady =
+			items.filter((item) => item.player[PLAYER.HUMAN]?.filled).length ===
+			boatsLeng;
+
+		return computerIsReady && humanIsReady;
+	}, [items]);
 
 	const setBoatPosition = useCallback(
 		({ box, boat }: CursorPosition) => {
@@ -85,6 +100,7 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 		randomOrientation,
 		orientation: orientation.current,
 		history,
+		playersAreReady,
 	};
 };
 

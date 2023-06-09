@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ComputerBoard, GameHistory, HumanBoard, ScoreBoard } from '@/components';
+import { BoatSettings, ComputerBoard, GameHistory, HumanBoard, ScoreBoard } from '@/components';
 import { BOARD_SIZE, BOATS, PLAYER, SHOT_VALUE } from '@/constants';
 import { useBoard, useGame } from '@/hooks';
-import { createArray, generateItems } from '@/methods';
+import { generateItems } from '@/methods';
 import { BOARD_BOX_ITEM, BOAT, BoatForPlayer, CursorPosition, TSHOT_VALUE } from '@/types';
 import { randomNumber, wait } from '@/utils';
 
@@ -41,25 +41,10 @@ function GameLayout() {
 	const [boatToSet, setBoatToSet] = useState<{ boat: BoatForPlayer; key: number; } | null>(null);
 	const [cursorPosition, setCursorPosition] = useState<CursorPosition | null>(null);
 	const [shotResult, setShotResult] = useState<{ type: TSHOT_VALUE; content: string; } | null>(null);
-	const { history, setBoatPosition, switchOrientation, randomOrientation } = useGame({
+	const { playersAreReady, history, setBoatPosition, switchOrientation, randomOrientation } = useGame({
 		setBoxesOver,
 		items,
 	});
-
-	const playersAreReady = useMemo(() => {
-		const boatsLeng = BOATS.map((boat) => boat.squares).reduce(
-			(accumulator, current) => accumulator + current,
-			0,
-		);
-		const computerIsReady =
-			items.filter((item) => item.player[PLAYER.COMPUTER]?.filled).length ===
-			boatsLeng;
-		const humanIsReady =
-			items.filter((item) => item.player[PLAYER.HUMAN]?.filled).length ===
-			boatsLeng;
-
-		return computerIsReady && humanIsReady;
-	}, [items]);
 
 	const isConflict = useMemo<boolean>(() => {
 		return !!(
@@ -194,7 +179,7 @@ function GameLayout() {
 		});
 	}, [boxesOver, boatToSet, playerBoatsDone]);
 
-	const onClickBoatHandler = useCallback((boat: BoatForPlayer, key: number) => {
+	const onClickBoatSettings = useCallback((boat: BoatForPlayer, key: number) => {
 		if (boat.done) return;
 
 		setBoatToSet({ boat, key });
@@ -446,67 +431,14 @@ function GameLayout() {
 						</div>
 					</div>
 
-					{!gameReady && (
-						<div className="w-full px-4">
-							<h2 className="text-4xl py-2">Boats</h2>
-							<div className="text-sm py-4">
-								<p>
-									Here your boats! Click on one of them and (the color will turn
-									to orange), and move the mouse to on the Board in the left.
-									Press <code className="font-console text-slate-600">space</code> bar to
-									change the orientation. Once you have desired where you want
-									to sert your boat, click on the box in the board and back here
-									to get other boat.
-								</p>
-							</div>
-							<div className="w-auto space-y-4">
-								{boatsForPlayer?.map((boat, boatKey: number) => (
-									<div
-										className={[
-											'relative text-white uppercase',
-											boat.done ? 'cursor-not-allowed' : 'hover:cursor-pointer group',
-										].join(' ')}
-										key={boatKey}
-										onClick={() => onClickBoatHandler(boat, boatKey)}
-									>
-										<div className="w-full h-full absolute flex items-center justify-center pointer-events-none">
-											{boat.label}
-										</div>
-										<div className="flex items-center justify-center pointer-events-none">
-											{createArray(boat.squares).map((_, squareKey: number) => {
-												return (
-													<div
-														className={[
-															'w-[50px] h-[50px] border',
-															boat.pending ? 'bg-orange-200' : '',
-															boat.done ? 'bg-green-200' : '',
-															!boat.pending && !boat.done ? 'bg-blue-600 group-hover:bg-blue-800' : '',
-														].join(' ')}
-														key={squareKey}
-													></div>
-												);
-											})}
-										</div>
-									</div>
-								))}
-							</div>
+					{!gameReady && <BoatSettings
+						boats={boatsForPlayer}
+						onClickBoat={onClickBoatSettings}
+						onClickStartGame={onClickStartGame}
+						playerBoatsDone={playerBoatsDone}
+						playersAreReady={playersAreReady}
+					/>}
 
-							<div className="mt-12">
-								<button
-									className={[
-										'text-2xl py-2 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-800 hover:cursor-pointer',
-										!playerBoatsDone
-											? 'cursor-not-allowed disabled:bg-gray-400'
-											: '',
-									].join(' ')}
-									disabled={!playersAreReady}
-									onClick={onClickStartGame}
-								>
-									start
-								</button>
-							</div>
-						</div>
-					)}
 					{gameReady && (
 						<div className="w-full px-4">
 							<h2 className="text-4xl py-2">Scores</h2>
