@@ -5,16 +5,19 @@ export const LETTERS = 'ABCDEFGHIJ';
 
 export const BOATS: Boat[] = [
 	{
+		id: crypto.randomUUID(),
 		label: 'Battleship',
-		squares: 5,
+		length: 5,
 	},
 	{
+		id: crypto.randomUUID(),
 		label: 'Destroyer',
-		squares: 4,
+		length: 4,
 	},
 	{
+		id: crypto.randomUUID(),
 		label: 'Destroyer',
-		squares: 4,
+		length: 4,
 	},
 ];
 
@@ -33,7 +36,7 @@ export const SHOT_VALUE: { [K in Uppercase<Shot>]: Shot } = {
 	WATER: 'water',
 };
 
-export const MAX_SCORES = BOATS.map((boat) => boat.squares).reduce(
+export const MAX_SCORES = BOATS.map((boat) => boat.length).reduce(
 	(a, b) => a + b,
 	0,
 );

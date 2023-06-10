@@ -9,7 +9,7 @@ import {
 	ShotFeedback} from '@/components';
 import { BOARD_SIZE, BOATS, PLAYER, SHOT_VALUE } from '@/constants';
 import { useBoard, useGame } from '@/hooks';
-import { generateItems } from '@/methods';
+import { boatIsSunk, generateItems } from '@/methods';
 import { BoardBoxItem, Boat, BoatForPlayer, CursorPosition, Shot } from '@/types';
 import { randomNumber, wait } from '@/utils';
 
@@ -39,7 +39,7 @@ function GameLayout() {
 	);
 	const [boxesOver, setBoxesOver] = useState<number[]>([]);
 	const [showComputerBoats, setShowComputerBoats] = useState<boolean>(false);
-	const [boatToSet, setBoatToSet] = useState<{ boat: BoatForPlayer; key: number; } | null>(null);
+	const [boatToSet, updateBoatsToSet] = useState<{ boat: BoatForPlayer; key: number; } | null>(null);
 	const [cursorPosition, setCursorPosition] = useState<CursorPosition | null>(null);
 	const [shotResult, setShotResult] = useState<{ type: Shot; content: string; } | null>(null);
 	const {
@@ -49,10 +49,12 @@ function GameLayout() {
 		setGameReady,
 		updateGameCounterValue,
 		updateGameCounterLabel,
+		updateBoatsInGame,
 		gameReady,
 		playersAreReady,
 		history,
 		counter,
+		boatsInGame,
 	} = useGame({
 		setBoxesOver,
 		items,
@@ -68,9 +70,9 @@ function GameLayout() {
 	}, [boxesOver, items, boatToSet]);
 
 	const playerBoatsDone = useMemo(() => {
-		const squares = BOATS.map((b) => b.squares).reduce((a, b) => a + b, 0);
+		const boatLength = BOATS.map((b) => b.length).reduce((a, b) => a + b, 0);
 		return (
-			items.filter((i) => i.player[PLAYER.HUMAN].filled).length === squares
+			items.filter((i) => i.player[PLAYER.HUMAN].filled).length === boatLength
 		);
 	}, [items]);
 
@@ -102,8 +104,12 @@ function GameLayout() {
 		({ box, row }: BoardBoxItem) => {
 			if (!boatToSet) return;
 
-			setCursorPosition({ box, row, boat: boatToSet.boat.squares });
-			const boxes = setBoatPosition({ box, row, boat: boatToSet.boat.squares });
+			setCursorPosition({
+				box, row, boat: boatToSet.boat.length,
+			});
+			const boxes = setBoatPosition({
+				box, row, boat: boatToSet.boat.length,
+			});
 
 			updateItems((prevItems) => {
 				return prevItems.map((item) => {
@@ -124,17 +130,31 @@ function GameLayout() {
 		updateItems((prevItems) => {
 			return prevItems.map((item) => {
 				if (boxesOver.includes(item.box)) {
-					item.player[PLAYER.HUMAN].filled = true;
+					item.player[PLAYER.HUMAN].filled = boatToSet.boat.id;
 				}
 
 				return item;
 			});
 		});
 
+		if (boatsInGame) {
+			if (!boatsInGame[PLAYER.HUMAN]) {
+				boatsInGame[PLAYER.HUMAN] = [];
+			}
+			boatsInGame[PLAYER.HUMAN].push({
+				label: boatToSet.boat.label,
+				squares: boxesOver,
+				length: boxesOver.length,
+				id: boatToSet.boat.id,
+				sunk: false,
+			});
+		}
+
+		updateBoatsInGame(boatsInGame);
 		setCursorPosition(null);
 		boatsForPlayer[boatToSet.key].pending = false;
 		boatsForPlayer[boatToSet.key].done = true;
-		setBoatToSet(null);
+		updateBoatsToSet(null);
 		setBoxesOver([]);
 		updateItems((prevItems) => {
 			return prevItems.map((i) => {
@@ -148,7 +168,7 @@ function GameLayout() {
 	const onClickBoatSettings = useCallback((boat: BoatForPlayer, key: number) => {
 		if (boat.done) return;
 
-		setBoatToSet({ boat, key });
+		updateBoatsToSet({ boat, key });
 
 		boatsForPlayer = boatsForPlayer.map((boatForPlayer, boatKey) => {
 			boatForPlayer.pending = key === boatKey;
@@ -182,15 +202,22 @@ function GameLayout() {
 
 			const successShot = _item.player[PLAYER.COMPUTER].filled;
 
+			const isSunk = boatIsSunk({
+				items,
+				from: PLAYER.HUMAN,
+				item: _item,
+				boatsInGame,
+			});
+
 			updateItems((prevItems: BoardBoxItem[]) => {
 				return prevItems.map((item: BoardBoxItem) => {
-					const isComputerBoat = item.player[PLAYER.COMPUTER].filled;
 					if (item.box === _item.box) {
 						item.player[PLAYER.HUMAN].shot = {
-							value: isComputerBoat
+							value: successShot
 								? SHOT_VALUE.TOUCH
 								: SHOT_VALUE.WATER,
 							date: Date.now(),
+							sunk: isSunk,
 						};
 					}
 
@@ -203,7 +230,9 @@ function GameLayout() {
 			if (successShot) {
 				setShotResult({
 					type: SHOT_VALUE.TOUCH,
-					content: 'Nice shot!!! 🙌',
+					content: isSunk
+						? 'Nice!!!, you sank their boat!!!'
+						: 'Nice shot!!! 🙌',
 				});
 			} else {
 				setShotResult({
@@ -217,7 +246,7 @@ function GameLayout() {
 			setShotResult(null);
 			setTurn(PLAYER.COMPUTER);
 		},
-		[items],
+		[items, boatsInGame],
 	);
 
 	const randomTurn = useCallback(() => {
@@ -233,7 +262,7 @@ function GameLayout() {
 			(item) => !item.player[PLAYER.COMPUTER].shot,
 		);
 		const box = randomNumber(0, allowedBoxes.length);
-		const alreadyDone = items.find(
+		const alreadyDone = allowedBoxes.find(
 			(item, itemIndex) =>
 				itemIndex === box && item.player[PLAYER.COMPUTER].shot,
 		);
@@ -243,19 +272,28 @@ function GameLayout() {
 			return;
 		}
 
-		const successShot = items.find((item) => {
-			return item.box === box && item.player[PLAYER.HUMAN].filled;
+		const item = items.find((item) => {
+			return item.box === box;
+		});
+
+		const successShot = item?.player[PLAYER.HUMAN].filled;
+
+		const isSunk = boatIsSunk({
+			items,
+			from: PLAYER.COMPUTER,
+			item,
+			boatsInGame,
 		});
 
 		await updateItems((prevItems: BoardBoxItem[]) => {
 			return prevItems.map((item: BoardBoxItem) => {
-				const isHumanBoat = item.player[PLAYER.HUMAN].filled;
 				if (item.box === box) {
 					item.player[PLAYER.COMPUTER].shot = {
-						value: isHumanBoat
+						value: successShot
 							? SHOT_VALUE.TOUCH
 							: SHOT_VALUE.WATER,
 						date: Date.now(),
+						sunk: isSunk,
 					};
 				}
 
@@ -270,7 +308,9 @@ function GameLayout() {
 		if (successShot) {
 			setShotResult({
 				type: SHOT_VALUE.TOUCH,
-				content: '😵, the computer hits one of your boats',
+				content: isSunk
+					? '😵‍💫, the computer finally sank one of your boats.'
+					: '😵, the computer hits one of your boats',
 			});
 		} else {
 			setShotResult({
@@ -282,7 +322,7 @@ function GameLayout() {
 		await wait(1000);
 
 		setShotResult(null);
-	}, [items]);
+	}, [items, boatsInGame]);
 
 	const runCounter = useCallback(async () => {
 		updateGameCounterLabel(String(counter.value));
@@ -339,7 +379,7 @@ function GameLayout() {
 			const row = Math.ceil(box / BOARD_SIZE);
 			randomOrientation();
 
-			const boxes = setBoatPosition({ box, row, boat: boat.squares });
+			const boxes = setBoatPosition({ box, row, boat: boat.length });
 
 			const conflict = _items.some((item) => {
 				return item.player[PLAYER.COMPUTER].filled && boxes.includes(item.box);
@@ -351,15 +391,29 @@ function GameLayout() {
 				continue;
 			}
 
+			if (boatsInGame) {
+				if (!boatsInGame[PLAYER.COMPUTER]) {
+					boatsInGame[PLAYER.COMPUTER] = [];
+				}
+				boatsInGame[PLAYER.COMPUTER].push({
+					label: boat.label,
+					squares: boxes,
+					length: boxes.length,
+					id: boat.id,
+					sunk: false,
+				});
+			}
+
 			_items = _items.map((item) => {
 				if (boxes.includes(item.box)) {
-					item.player[PLAYER.COMPUTER].filled = true;
+					item.player[PLAYER.COMPUTER].filled = boat.id;
 				}
 
 				return item;
 			});
 		}
 
+		updateBoatsInGame(boatsInGame);
 		updateItems(_items);
 	}, []);
 
@@ -400,6 +454,7 @@ function GameLayout() {
 							gameReady={gameReady}
 							turn={turn}
 							disableClick={isConflict && !!boatToSet}
+							boatsInGame={boatsInGame}
 						/>
 					</div>
 
@@ -439,7 +494,7 @@ function GameLayout() {
 				{showComputerBoats && (
 					<div>
 						<h2>Computer bddoard</h2>
-						<ComputerBoard board={board} />
+						<ComputerBoard board={board} boatsInGame={boatsInGame} />
 						<div></div>
 					</div>
 				)}

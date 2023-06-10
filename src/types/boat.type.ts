@@ -1,6 +1,7 @@
 type Boat = {
+	id: string;
 	label: string;
-	squares: number;
+	length: number;
 };
 
 export default Boat;

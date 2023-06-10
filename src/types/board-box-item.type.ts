@@ -4,8 +4,9 @@ type PlayerStatus = {
 	shot: null | {
 		value: Shot;
 		date: number;
+		sunk: boolean;
 	};
-	filled: boolean;
+	filled: null | string;
 }
 
 type BoardBoxItem = {

@@ -103,6 +103,7 @@ describe("[Hooks]: useBoard", () => {
 						item.player[PLAYER.COMPUTER].shot = {
 							date,
 							value: SHOT_VALUE.TOUCH,
+							sunk: false,
 						};
 					}
 
@@ -113,14 +114,15 @@ describe("[Hooks]: useBoard", () => {
 			const item = items.find((_item: BoardBoxItem) => _item.box === box);
 			expect(item.player).toStrictEqual({
 				computer: {
-					filled: false,
+					filled: null,
 					shot: {
 						date,
 						value: SHOT_VALUE.TOUCH,
+						sunk: false,
 					},
 				},
 				human: {
-					filled: false,
+					filled: null,
 					shot: null,
 				},
 			});
@@ -134,14 +136,15 @@ describe("[Hooks]: useBoard", () => {
 
 			expect(item.player).toStrictEqual({
 				computer: {
-					filled: false,
+					filled: null,
 					shot: {
 						date,
 						value: SHOT_VALUE.TOUCH,
+						sunk: false,
 					},
 				},
 				human: {
-					filled: false,
+					filled: null,
 					shot: null,
 				},
 			});

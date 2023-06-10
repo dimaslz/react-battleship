@@ -26,6 +26,10 @@ describe("[Components]: PlayerBoardView", () => {
 				}}
 				disableClick={false}
 				turn={PLAYER.HUMAN}
+				boatsInGame={{
+					human: [],
+					computer: [],
+				}}
 			/>);
 
 			expect(view.baseElement).toBeInTheDocument();
@@ -49,6 +53,10 @@ describe("[Components]: PlayerBoardView", () => {
 				}}
 				disableClick={false}
 				turn={PLAYER.HUMAN}
+				boatsInGame={{
+					human: [],
+					computer: [],
+				}}
 			/>);
 
 			const boxElement = screen.getByText("D4");
@@ -62,11 +70,11 @@ describe("[Components]: PlayerBoardView", () => {
 				over: false,
 				player: {
 					computer: {
-						filled: false,
+						filled: null,
 						shot: null,
 					},
 					human: {
-						filled: false,
+						filled: null,
 						shot: null,
 					},
 				},
@@ -90,6 +98,10 @@ describe("[Components]: PlayerBoardView", () => {
 				}}
 				disableClick={false}
 				turn={PLAYER.HUMAN}
+				boatsInGame={{
+					human: [],
+					computer: [],
+				}}
 			/>);
 
 			const boxElement = screen.getByText("D4");
@@ -103,11 +115,11 @@ describe("[Components]: PlayerBoardView", () => {
 				over: false,
 				player: {
 					computer: {
-						filled: false,
+						filled: null,
 						shot: null,
 					},
 					human: {
-						filled: false,
+						filled: null,
 						shot: null,
 					},
 				},
@@ -133,6 +145,10 @@ describe("[Components]: PlayerBoardView", () => {
 					}}
 					disableClick={false}
 					turn={PLAYER.HUMAN}
+					boatsInGame={{
+						human: [],
+						computer: [],
+					}}
 				/>
 			</div>);
 

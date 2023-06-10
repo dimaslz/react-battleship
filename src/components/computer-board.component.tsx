@@ -1,11 +1,30 @@
 import { PLAYER, SHOT_VALUE } from '@/constants';
-import { BoardRow } from '@/types';
+import { BoardBoxItem, BoardRow, BoatsInGame } from '@/types';
 
 type Props = {
 	board: BoardRow[];
+	boatsInGame: BoatsInGame | undefined;
 };
 
-const ComputerBoard = ({ board }: Props) => {
+const ComputerBoard = ({ board, boatsInGame }: Props) => {
+
+	const isSunk = (item: BoardBoxItem) => {
+		if (!boatsInGame) return false;
+
+		const boatId = item.player[PLAYER.COMPUTER].filled;
+		const boat = boatsInGame[PLAYER.COMPUTER]?.find(({ id }) => id === boatId);
+
+		return boat?.sunk;
+	};
+
+	const isTouched = (item: BoardBoxItem) => {
+		return item.player[PLAYER.COMPUTER].shot?.value === SHOT_VALUE.TOUCH;
+	};
+
+	const isWater = (item: BoardBoxItem) => {
+		return item.player[PLAYER.COMPUTER].shot?.value === SHOT_VALUE.WATER;
+	};
+
 	return (
 		<>
 			<div className="flex flex-col w-full justify-center items-center">
@@ -16,14 +35,14 @@ const ComputerBoard = ({ board }: Props) => {
 								<div
 									className={[
 										'w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed flex-col',
-										box.player[PLAYER.COMPUTER].shot?.value === SHOT_VALUE.TOUCH
+										isTouched(box)
 											? 'border-red-400 border-2'
 											: '',
-										box.player[PLAYER.COMPUTER].shot?.value === SHOT_VALUE.WATER
+										isWater(box)
 											? 'border-blue-400 border-2'
 											: '',
 										box.player[PLAYER.HUMAN].shot?.value === SHOT_VALUE.TOUCH
-											? 'bg-red-400'
+											? isSunk(box) ? 'bg-red-800' : 'bg-red-400'
 											: box.player[PLAYER.COMPUTER].filled ? 'bg-slate-200' : '',
 									].join(' ')}
 								>

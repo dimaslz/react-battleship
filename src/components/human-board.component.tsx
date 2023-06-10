@@ -1,21 +1,42 @@
 import { PLAYER, SHOT_VALUE } from '@/constants';
-import { BoardBoxItem,BoardRow } from '@/types';
+import { BoardBoxItem,BoardRow, BoatsInGame } from '@/types';
 
 type Props = {
 	board: BoardRow[];
 	hideBoats: boolean;
 	disableClick: boolean;
+	boatsInGame: BoatsInGame | undefined;
 	onMouseOver: (item: BoardBoxItem) => void;
 	onClick: (item: BoardBoxItem) => void;
 };
 
 const HumanBoard = ({
-	board,
 	onMouseOver,
 	onClick,
+	board,
 	hideBoats,
 	disableClick,
+	boatsInGame,
 }: Props) => {
+
+	const isSunk = (item: BoardBoxItem) => {
+		if (!boatsInGame) return false;
+
+		const boatId = item.player[PLAYER.HUMAN].filled;
+		const boat = boatsInGame[PLAYER.HUMAN]?.find(({ id }) => id === boatId);
+
+		return boat?.sunk;
+	};
+
+	const opponentBoatIsSunk = (item: BoardBoxItem) => {
+		if (!boatsInGame) return false;
+
+		const boatId = item.player[PLAYER.COMPUTER].filled;
+		const boat = boatsInGame[PLAYER.COMPUTER]?.find(({ id }) => id === boatId);
+
+		return boat?.sunk;
+	};
+
 	return (
 		<>
 			{board.map((row, rowKey) => {
@@ -29,13 +50,13 @@ const HumanBoard = ({
 								className={[
 									'w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed hover:border-2 hover:border-slate-600 flex-col',
 									item.player[PLAYER.HUMAN].shot?.value === SHOT_VALUE.TOUCH
-										? 'border-red-400 border-2 hover:!cursor-not-allowed'
+										? opponentBoatIsSunk(item) ? 'border-red-800 border-2 hover:!cursor-not-allowed text-red-800 font-bold' : 'border-red-400 border-2 hover:!cursor-not-allowed font-bold'
 										: '',
 									item.player[PLAYER.HUMAN].shot?.value === SHOT_VALUE.WATER
 										? 'border-blue-400 border-2 hover:!cursor-not-allowed'
 										: '',
 									item.player[PLAYER.COMPUTER].shot?.value === SHOT_VALUE.TOUCH
-										? 'bg-red-400'
+										? isSunk(item) ? 'bg-red-800' : 'bg-red-400'
 										: '',
 									item.over && !disableClick ? 'bg-slate-200' : '',
 									item.over && disableClick

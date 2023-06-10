@@ -1,3 +1,4 @@
+export { default as boatIsSunk } from './boat-is-sunk.method';
 export { default as createArray } from './create-array.method';
 export { default as createBoard } from './create-board.method';
 export { default as generateItems } from './generate-items.method';

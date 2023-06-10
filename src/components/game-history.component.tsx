@@ -4,7 +4,7 @@ import { PLAYER, SHOT_VALUE } from "@/constants";
 import { History } from "@/types";
 
 type Props = {
-	history: History[]
+	history: History[];
 }
 
 const GameHistory = ({ history }: Props) => {
@@ -18,11 +18,16 @@ const GameHistory = ({ history }: Props) => {
 							const date = dayjs(historyItem.date).format("YYYY/MM/DD - HH:mm:ss");
 							const who = historyItem.who === PLAYER.COMPUTER ? "💻" : "🙋‍♂️";
 							const value = historyItem.value === SHOT_VALUE.WATER ? "💦" : "💥";
+							const isSunk = historyItem.sunk ? " - 🔻 sunk!" : '';
 
 							return (
-								<div className='text-sm flex space-x-2' key={historyItemIndex}>
+								<div
+									className='text-sm flex space-x-2'
+									key={historyItemIndex}
+									aria-label={`${who} [${date}]: ${historyItem.label} - ${value}${isSunk}`}
+								>
 									<div>{who} [{date}]:</div>
-									<div className='text-slate-600'>{historyItem.label} - {value}</div>
+									<div className='text-slate-600'>{historyItem.label} - {value}{isSunk}</div>
 								</div>
 							);
 						})}

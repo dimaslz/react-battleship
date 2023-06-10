@@ -43,7 +43,7 @@ const BoatSettings = ({
 							{boat.label}
 						</div>
 						<div className="flex items-center justify-center pointer-events-none">
-							{createArray(boat.squares).map((_, squareKey: number) => {
+							{createArray(boat.length).map((_, squareKey: number) => {
 								return (
 									<div
 										className={[

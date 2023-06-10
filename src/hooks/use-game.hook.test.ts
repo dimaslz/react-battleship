@@ -66,6 +66,12 @@ describe("[Hooks]: useGame", () => {
 			expect(counter.value).toBe(5);
 			expect(counter.label).toBe('');
 		});
+
+		test("'boatsInGame' has default values", () => {
+			const { boatsInGame } = expected.current;
+
+			expect(boatsInGame).toStrictEqual({ human: [], computer: [] });
+		});
 	});
 
 	describe("actions", () => {

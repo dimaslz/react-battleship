@@ -1,8 +1,8 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { BOATS, ORIENTATION, PLAYER } from '@/constants';
 import { setHorizontalBoatPosition, setVerticalBoatPosition } from '@/methods';
-import { BoardBoxItem, CursorPosition, History, Orientation } from '@/types';
+import { BoardBoxItem, BoatsInGame, CursorPosition, History, Hits, Orientation, Player } from '@/types';
 import { randomNumber } from '@/utils';
 
 type Props = {
@@ -11,7 +11,15 @@ type Props = {
 };
 
 const useGameHook = ({ setBoxesOver, items }: Props) => {
+	const [hits, updateHits] = useState<Hits>({
+		"human": [],
+		"computer": [],
+	});
 	const orientation = useRef<Orientation>(ORIENTATION.HORIZONTAL);
+	const [boatsInGame, updateBoatsInGame] = useState<BoatsInGame>({
+		"human": [],
+		"computer": [],
+	});
 	const [gameReady, setGameReady] = useState<boolean>(false);
 	const [gameCounterValue, updateGameCounterValue] = useState<number>(5);
 	const [gameCounterLabel, updateGameCounterLabel] = useState<string>('');
@@ -24,10 +32,11 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 	}, [orientation]);
 
 	const playersAreReady = useMemo(() => {
-		const boatsLeng = BOATS.map((boat) => boat.squares).reduce(
+		const boatsLeng = BOATS.map((boat) => boat.length).reduce<number>(
 			(accumulator, current) => accumulator + current,
 			0,
 		);
+
 		const computerIsReady =
 			items.filter((item) => item.player[PLAYER.COMPUTER]?.filled).length ===
 			boatsLeng;
@@ -67,35 +76,63 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 	};
 
 	const history = useMemo<History[]>(() => {
-		return items.filter((item) => {
-			const computerShots = item.player[PLAYER.COMPUTER].shot;
-			const humanShots = item.player[PLAYER.HUMAN].shot;
+		const accumulator: History[] = [];
+		const hits: Hits = {
+			"human": [],
+			"computer": [],
+		};
 
-			return computerShots || humanShots;
-		}).reduce<History[]>((accumulator, currentItem) => {
-			const playerShot = currentItem.player[PLAYER.HUMAN].shot;
-			if (playerShot) {
-				accumulator.push({
-					...currentItem,
-					date: playerShot.date,
-					value: playerShot.value,
-					who: PLAYER.HUMAN,
-				});
+		for (const item of items) {
+			const computerShot = item.player[PLAYER.COMPUTER].shot;
+			const humanShot = item.player[PLAYER.HUMAN].shot;
+
+			if (computerShot) {
+				hits[PLAYER.COMPUTER].push(item.box);
 			}
 
-			const computerShot = currentItem.player[PLAYER.COMPUTER].shot;
+			if (humanShot) {
+				hits[PLAYER.HUMAN].push(item.box);
+			}
+
 			if (computerShot) {
 				accumulator.push({
-					...currentItem,
+					...item,
 					date: computerShot.date,
 					value: computerShot.value,
 					who: PLAYER.COMPUTER,
+					sunk: !!item.player[PLAYER.COMPUTER].shot?.sunk,
 				});
 			}
-			return accumulator;
-		}, [])
+
+			if (humanShot) {
+				accumulator.push({
+					...item,
+					date: humanShot.date,
+					value: humanShot.value,
+					who: PLAYER.HUMAN,
+					sunk: !!item.player[PLAYER.HUMAN].shot?.sunk,
+				});
+			}
+
+		}
+
+		updateHits(hits);
+		return accumulator
 			.sort((prevItem, nextItem) => prevItem.date > nextItem.date ? - 1 : 1);
 	}, [items]);
+
+	useEffect(() => {
+		(Object.entries(hits) as [Player, number[]][]).forEach(([player, playerHits]) => {
+			const opponent = player === PLAYER.COMPUTER ? PLAYER.HUMAN : PLAYER.COMPUTER;
+
+			boatsInGame[opponent] = boatsInGame[opponent].map((boat) => {
+				boat.sunk = boat.squares.every((square) => playerHits.includes(square));
+				return boat;
+			});
+		});
+
+		updateBoatsInGame(boatsInGame);
+	}, [hits]);
 
 	return {
 		setBoatPosition,
@@ -104,6 +141,7 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 		setGameReady,
 		updateGameCounterValue,
 		updateGameCounterLabel,
+		updateBoatsInGame,
 		gameReady,
 		history,
 		playersAreReady,
@@ -111,6 +149,7 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 			value: gameCounterValue,
 			label: gameCounterLabel,
 		},
+		boatsInGame,
 	};
 };
 

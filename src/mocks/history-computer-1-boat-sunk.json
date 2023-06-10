@@ -1,0 +1,235 @@
+[
+	{
+			"box": 56,
+			"col": 6,
+			"row": 6,
+			"label": "F6",
+			"over": false,
+			"player": {
+					"human": {
+							"filled": "18da4aea-379d-4494-ab3d-58e0956bd143",
+							"shot": null
+					},
+					"computer": {
+							"filled": "513f8724-1824-4ede-89c8-7ec1d9d3045f",
+							"shot": {
+									"value": "touch",
+									"date": 1686505963047,
+									"sunk": false
+							}
+					}
+			},
+			"date": 1686505963047,
+			"value": "touch",
+			"who": "computer",
+			"sunk": false
+	},
+	{
+			"box": 38,
+			"col": 8,
+			"row": 4,
+			"label": "H4",
+			"over": false,
+			"player": {
+					"human": {
+							"filled": null,
+							"shot": {
+									"value": "touch",
+									"date": 1686505960522,
+									"sunk": true
+							}
+					},
+					"computer": {
+							"filled": "18da4aea-379d-4494-ab3d-58e0956bd143",
+							"shot": null
+					}
+			},
+			"date": 1686505960522,
+			"value": "touch",
+			"who": "human",
+			"sunk": true
+	},
+	{
+			"box": 80,
+			"col": 10,
+			"row": 8,
+			"label": "J8",
+			"over": false,
+			"player": {
+					"human": {
+							"filled": null,
+							"shot": {
+									"value": "water",
+									"date": 1686505953702,
+									"sunk": false
+							}
+					},
+					"computer": {
+							"filled": null,
+							"shot": null
+					}
+			},
+			"date": 1686505953702,
+			"value": "water",
+			"who": "human",
+			"sunk": false
+	},
+	{
+			"box": 98,
+			"col": 8,
+			"row": 10,
+			"label": "H10",
+			"over": false,
+			"player": {
+					"human": {
+							"filled": null,
+							"shot": null
+					},
+					"computer": {
+							"filled": null,
+							"shot": {
+									"value": "water",
+									"date": 1686505946124,
+									"sunk": false
+							}
+					}
+			},
+			"date": 1686505946124,
+			"value": "water",
+			"who": "computer",
+			"sunk": false
+	},
+	{
+			"box": 28,
+			"col": 8,
+			"row": 3,
+			"label": "H3",
+			"over": false,
+			"player": {
+					"human": {
+							"filled": "1cd3cd5b-5441-4b2f-ad21-400a94f8bb31",
+							"shot": {
+									"value": "touch",
+									"date": 1686505943581,
+									"sunk": false
+							}
+					},
+					"computer": {
+							"filled": "18da4aea-379d-4494-ab3d-58e0956bd143",
+							"shot": {
+									"value": "touch",
+									"date": 1686505941580,
+									"sunk": false
+							}
+					}
+			},
+			"date": 1686505943581,
+			"value": "touch",
+			"who": "human",
+			"sunk": false
+	},
+	{
+			"box": 28,
+			"col": 8,
+			"row": 3,
+			"label": "H3",
+			"over": false,
+			"player": {
+					"human": {
+							"filled": "1cd3cd5b-5441-4b2f-ad21-400a94f8bb31",
+							"shot": {
+									"value": "touch",
+									"date": 1686505943581,
+									"sunk": false
+							}
+					},
+					"computer": {
+							"filled": "18da4aea-379d-4494-ab3d-58e0956bd143",
+							"shot": {
+									"value": "touch",
+									"date": 1686505941580,
+									"sunk": false
+							}
+					}
+			},
+			"date": 1686505941580,
+			"value": "touch",
+			"who": "computer",
+			"sunk": false
+	},
+	{
+			"box": 18,
+			"col": 8,
+			"row": 2,
+			"label": "H2",
+			"over": false,
+			"player": {
+					"human": {
+							"filled": null,
+							"shot": {
+									"value": "touch",
+									"date": 1686505939042,
+									"sunk": false
+							}
+					},
+					"computer": {
+							"filled": "18da4aea-379d-4494-ab3d-58e0956bd143",
+							"shot": null
+					}
+			},
+			"date": 1686505939042,
+			"value": "touch",
+			"who": "human",
+			"sunk": false
+	},
+	{
+			"box": 76,
+			"col": 6,
+			"row": 8,
+			"label": "F8",
+			"over": false,
+			"player": {
+					"human": {
+							"filled": "513f8724-1824-4ede-89c8-7ec1d9d3045f",
+							"shot": null
+					},
+					"computer": {
+							"filled": "1cd3cd5b-5441-4b2f-ad21-400a94f8bb31",
+							"shot": {
+									"value": "touch",
+									"date": 1686505937098,
+									"sunk": false
+							}
+					}
+			},
+			"date": 1686505937098,
+			"value": "touch",
+			"who": "computer",
+			"sunk": false
+	},
+	{
+			"box": 8,
+			"col": 8,
+			"row": 1,
+			"label": "H1",
+			"over": false,
+			"player": {
+					"human": {
+							"filled": null,
+							"shot": {
+									"value": "touch",
+									"date": 1686505934562,
+									"sunk": false
+							}
+					},
+					"computer": {
+							"filled": "18da4aea-379d-4494-ab3d-58e0956bd143",
+							"shot": null
+					}
+			},
+			"date": 1686505934562,
+			"value": "touch",
+			"who": "human",
+			"sunk": false
+	}
+]

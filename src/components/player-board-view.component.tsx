@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { HumanBoard } from "@/components";
 import { PLAYER } from "@/constants";
-import { BoardBoxItem, BoardRow, Player } from "@/types";
+import { BoardBoxItem, BoardRow, BoatsInGame, Player } from "@/types";
 
 type Props = {
 	onMouseLeave: () => void;
@@ -16,6 +16,7 @@ type Props = {
 	turn: Player | null;
 	disableClick: boolean;
 	gameReady: boolean;
+	boatsInGame: BoatsInGame;
 }
 
 const PlayerBoardView = ({
@@ -27,6 +28,7 @@ const PlayerBoardView = ({
 	counter,
 	turn,
 	disableClick,
+	boatsInGame,
 }: Props) => {
 	const [hideBoats, setHideBoats] = useState<boolean>(false);
 
@@ -54,6 +56,7 @@ const PlayerBoardView = ({
 					onMouseOver={onMouseOver}
 					onClick={onClick}
 					hideBoats={hideBoats}
+					boatsInGame={boatsInGame}
 				/>
 			</div>
 			{gameReady && !counter.label && (

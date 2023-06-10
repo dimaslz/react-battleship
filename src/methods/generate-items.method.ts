@@ -20,11 +20,11 @@ const generateItems = (): BoardBoxItem[] => {
 			over: false,
 			player: {
 				"human": {
-					filled: false,
+					filled: null,
 					shot: null,
 				},
 				"computer": {
-					filled: false,
+					filled: null,
 					shot: null,
 				},
 			},

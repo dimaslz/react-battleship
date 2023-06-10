@@ -7,11 +7,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -24,11 +24,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -41,11 +41,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -58,11 +58,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -75,11 +75,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -92,11 +92,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -109,11 +109,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -126,11 +126,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -143,11 +143,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -160,11 +160,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -177,11 +177,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -194,11 +194,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -211,11 +211,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -228,11 +228,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -245,11 +245,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -262,11 +262,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -279,11 +279,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -296,11 +296,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -313,11 +313,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -330,11 +330,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -347,11 +347,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -364,11 +364,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -381,11 +381,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -398,11 +398,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -415,11 +415,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -432,11 +432,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -449,11 +449,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -466,11 +466,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -483,11 +483,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -500,11 +500,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -517,11 +517,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -534,11 +534,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -551,11 +551,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -568,11 +568,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -585,11 +585,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -602,11 +602,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -619,11 +619,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -636,11 +636,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -653,11 +653,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -670,11 +670,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -687,11 +687,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -704,11 +704,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -721,11 +721,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -738,11 +738,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -755,11 +755,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -772,11 +772,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -789,11 +789,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -806,11 +806,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -823,11 +823,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -840,11 +840,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -857,11 +857,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -874,11 +874,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -891,11 +891,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -908,11 +908,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -925,11 +925,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -942,11 +942,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -959,11 +959,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -976,11 +976,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -993,11 +993,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1010,11 +1010,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1027,11 +1027,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1044,11 +1044,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1061,11 +1061,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1078,11 +1078,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1095,11 +1095,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1112,11 +1112,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1129,11 +1129,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1146,11 +1146,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1163,11 +1163,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1180,11 +1180,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1197,11 +1197,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1214,11 +1214,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1231,11 +1231,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1248,11 +1248,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1265,11 +1265,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1282,11 +1282,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1299,11 +1299,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1316,11 +1316,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1333,11 +1333,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1350,11 +1350,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1367,11 +1367,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1384,11 +1384,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1401,11 +1401,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1418,11 +1418,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1435,11 +1435,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1452,11 +1452,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1469,11 +1469,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1486,11 +1486,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1503,11 +1503,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1520,11 +1520,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1537,11 +1537,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1554,11 +1554,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1571,11 +1571,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1588,11 +1588,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1605,11 +1605,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1622,11 +1622,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1639,11 +1639,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1656,11 +1656,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1673,11 +1673,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
@@ -1690,11 +1690,11 @@
 			"over": false,
 			"player": {
 					"human": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					},
 					"computer": {
-							"filled": false,
+							"filled": null,
 							"shot": null
 					}
 			}
