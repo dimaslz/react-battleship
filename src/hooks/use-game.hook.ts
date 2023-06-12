@@ -1,16 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { BOATS, ORIENTATION, PLAYER } from '@/constants';
-import { setHorizontalBoatPosition, setVerticalBoatPosition } from '@/methods';
+import { BOATS, MAX_SCORES, ORIENTATION, PLAYER, SHOT_VALUE } from '@/constants';
+import { createBoard, setHorizontalBoatPosition, setVerticalBoatPosition } from '@/methods';
 import { BoardBoxItem, BoatsInGame, CursorPosition, History, Hits, Orientation, Player } from '@/types';
 import { randomNumber } from '@/utils';
 
 type Props = {
 	setBoxesOver: (arr: number[]) => void;
-	items: BoardBoxItem[];
+	initialItems: BoardBoxItem[];
 };
 
-const useGameHook = ({ setBoxesOver, items }: Props) => {
+const useGameHook = ({ setBoxesOver, initialItems }: Props) => {
+	const [turn, setTurn] = useState<Player | null>(null);
 	const [hits, updateHits] = useState<Hits>({
 		"human": [],
 		"computer": [],
@@ -23,6 +24,31 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 	const [gameReady, setGameReady] = useState<boolean>(false);
 	const [gameCounterValue, updateGameCounterValue] = useState<number>(5);
 	const [gameCounterLabel, updateGameCounterLabel] = useState<string>('');
+	const [items, updateItems] = useState<BoardBoxItem[]>(initialItems);
+
+	const board = useMemo(() => {
+		return createBoard(items);
+	}, [items]);
+
+	const humanScores = useMemo(() => {
+		return items.filter((item) => {
+			return item.player[PLAYER.HUMAN].shot?.value === SHOT_VALUE.TOUCH;
+		}).length;
+	}, [items]);
+
+	const computerScores = useMemo(() => {
+		return items.filter((item) => {
+			return item.player[PLAYER.COMPUTER].shot?.value === SHOT_VALUE.TOUCH;
+		}).length;
+	}, [items]);
+
+	const computerWins = useMemo(() => {
+		return computerScores === MAX_SCORES;
+	}, [computerScores]);
+
+	const humanWins = useMemo(() => {
+		return humanScores === MAX_SCORES;
+	}, [humanScores]);
 
 	const switchOrientation = useCallback(() => {
 		orientation.current =
@@ -142,6 +168,8 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 		updateGameCounterValue,
 		updateGameCounterLabel,
 		updateBoatsInGame,
+		setTurn,
+		updateItems,
 		gameReady,
 		history,
 		playersAreReady,
@@ -150,6 +178,16 @@ const useGameHook = ({ setBoxesOver, items }: Props) => {
 			label: gameCounterLabel,
 		},
 		boatsInGame,
+		turn,
+		items,
+		board,
+		scores: {
+			human: humanScores,
+			computer: computerScores,
+		},
+		maxScores: MAX_SCORES,
+		computerWins,
+		humanWins,
 	};
 };
 

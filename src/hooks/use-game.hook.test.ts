@@ -11,7 +11,7 @@ describe("[Hooks]: useGame", () => {
 
 	beforeAll(async () => {
 		expected = await act(async () => {
-			const { result } = await renderHook(() => useGame({ items, setBoxesOver: setBoxesOverMock }));
+			const { result } = await renderHook(() => useGame({ initialItems: items, setBoxesOver: setBoxesOverMock }));
 
 			return result;
 		});

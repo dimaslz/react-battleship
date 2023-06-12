@@ -8,7 +8,7 @@ import {
 	ScoreBoard,
 	ShotFeedback} from '@/components';
 import { BOARD_SIZE, BOATS, PLAYER, SHOT_VALUE } from '@/constants';
-import { useBoard, useGame } from '@/hooks';
+import { useGame } from '@/hooks';
 import { boatIsSunk, generateItems } from '@/methods';
 import { BoardBoxItem, Boat, BoatForPlayer, CursorPosition, Shot } from '@/types';
 import { randomNumber, wait } from '@/utils';
@@ -24,19 +24,6 @@ let boatsForPlayer: BoatForPlayer[] = structuredClone(
 );
 
 function GameLayout() {
-	const {
-		scores,
-		computerWins,
-		humanWins,
-		items,
-		updateItems,
-		board,
-		turn,
-		setTurn,
-		maxScores,
-	} = useBoard(
-		structuredClone(generateItems()),
-	);
 	const [boxesOver, setBoxesOver] = useState<number[]>([]);
 	const [showComputerBoats, setShowComputerBoats] = useState<boolean>(false);
 	const [boatToSet, updateBoatsToSet] = useState<{ boat: BoatForPlayer; key: number; } | null>(null);
@@ -55,9 +42,18 @@ function GameLayout() {
 		history,
 		counter,
 		boatsInGame,
+		scores,
+		computerWins,
+		humanWins,
+		items,
+		updateItems,
+		board,
+		turn,
+		setTurn,
+		maxScores,
 	} = useGame({
 		setBoxesOver,
-		items,
+		initialItems: structuredClone(generateItems()),
 	});
 
 	const isConflict = useMemo<boolean>(() => {
