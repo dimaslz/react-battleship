@@ -9,9 +9,9 @@ describe("[Components]: GameHistory", () => {
 	test("computer boat is sunk", () => {
 		render(<GameHistory history={history as History[]} />);
 
-		expect(screen.getByLabelText("🙋‍♂️ [2023/06/11 - 19:52:40]: H4 - 💥 - 🔻 sunk!"));
-		expect(screen.getByLabelText("🙋‍♂️ [2023/06/11 - 19:52:23]: H3 - 💥"));
-		expect(screen.getByLabelText("🙋‍♂️ [2023/06/11 - 19:52:19]: H2 - 💥"));
-		expect(screen.getByLabelText("🙋‍♂️ [2023/06/11 - 19:52:14]: H1 - 💥"));
+		expect(screen.getByLabelText("🙋‍♂️: H4 - 💥 - 🔻 sunk!"));
+		expect(screen.getByLabelText("🙋‍♂️: H3 - 💥"));
+		expect(screen.getByLabelText("🙋‍♂️: H2 - 💥"));
+		expect(screen.getByLabelText("🙋‍♂️: H1 - 💥"));
 	});
 });

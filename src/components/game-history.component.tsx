@@ -24,7 +24,7 @@ const GameHistory = ({ history }: Props) => {
 								<div
 									className='text-sm flex space-x-2'
 									key={historyItemIndex}
-									aria-label={`${who} [${date}]: ${historyItem.label} - ${value}${isSunk}`}
+									aria-label={`${who}: ${historyItem.label} - ${value}${isSunk}`}
 								>
 									<div>{who} [{date}]:</div>
 									<div className='text-slate-600'>{historyItem.label} - {value}{isSunk}</div>
