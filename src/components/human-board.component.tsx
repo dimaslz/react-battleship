@@ -53,7 +53,7 @@ const HumanBoard = ({
 										? opponentBoatIsSunk(item) ? 'border-red-800 border-2 hover:!cursor-not-allowed text-red-800 font-bold' : 'border-red-400 border-2 hover:!cursor-not-allowed font-bold'
 										: '',
 									item.player[PLAYER.HUMAN].shot?.value === SHOT_VALUE.WATER
-										? 'border-blue-400 border-2 hover:!cursor-not-allowed'
+										? 'border-blue-400 border-2 hover:!cursor-not-allowed font-bold'
 										: '',
 									item.player[PLAYER.COMPUTER].shot?.value === SHOT_VALUE.TOUCH
 										? isSunk(item) ? 'bg-red-800' : 'bg-red-400'

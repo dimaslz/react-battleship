@@ -36,6 +36,12 @@ describe("[Hooks]: useGame", () => {
 			expect(typeof randomOrientation).toBe("function");
 		});
 
+		test("'setGameReady' is present", () => {
+			const { setGameReady } = expected.current;
+
+			expect(typeof setGameReady).toBe("function");
+		});
+
 		test("'updateGameCounterValue' is present", () => {
 			const { updateGameCounterValue } = expected.current;
 
@@ -46,6 +52,24 @@ describe("[Hooks]: useGame", () => {
 			const { updateGameCounterLabel } = expected.current;
 
 			expect(typeof updateGameCounterLabel).toBe("function");
+		});
+
+		test("'updateBoatsInGame' is present", () => {
+			const { updateBoatsInGame } = expected.current;
+
+			expect(typeof updateBoatsInGame).toBe("function");
+		});
+
+		test("'setTurn' is present", () => {
+			const { setTurn } = expected.current;
+
+			expect(typeof setTurn).toBe("function");
+		});
+
+		test("'updateItems' is present", () => {
+			const { updateItems } = expected.current;
+
+			expect(typeof updateItems).toBe("function");
 		});
 
 		test("'history' is '[]' by default", () => {

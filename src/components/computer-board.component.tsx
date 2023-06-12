@@ -36,10 +36,10 @@ const ComputerBoard = ({ board, boatsInGame }: Props) => {
 									className={[
 										'w-[50px] h-[50px] flex items-center justify-center text-xs border border-dashed flex-col',
 										isTouched(box)
-											? 'border-red-400 border-2'
+											? 'border-red-400 border-2 font-bold'
 											: '',
 										isWater(box)
-											? 'border-blue-400 border-2'
+											? 'border-blue-400 border-2 font-bold'
 											: '',
 										box.player[PLAYER.HUMAN].shot?.value === SHOT_VALUE.TOUCH
 											? isSunk(box) ? 'bg-red-800' : 'bg-red-400'
