@@ -1,12 +1,12 @@
 ---
-  name: "DEPLOY"
+  name: "production-live"
   on: 
     workflow_dispatch: {}
     push: 
       branches: 
         - "main"
       paths-ignore: 
-        - ".github/workflows/fito-deploy-on-pull-request.yml"
+        - ".github/workflows/fito-deploy-*.yml"
         - "**/*.md"
   concurrency: 
     group: "${{ github.workflow }}-${{ github.ref }}"
@@ -15,7 +15,7 @@
     SSH_USER: "${{ secrets.FITO_ENV_CONNECTION_USER }}"
     SSH_KEY: "${{ secrets.FITO_ENV_CONNECTION_PRIVATE_KEY }}"
     SSH_HOST: "${{ secrets.FITO_ENV_CONNECTION_HOST }}"
-    ATTEMPTS: "${{ github.run_attempt }}"
+    ATTEMPTS: "${{ github.run_number }}"
   jobs: 
     install-dependencies: 
       name: "install dependencies"
@@ -43,8 +43,8 @@
           with: 
             path: "./*"
             key: "${{ github.sha }}-cache"
-    test: 
-      name: "test"
+    build-application: 
+      name: "build application"
       runs-on: "ubuntu-latest"
       needs: "install-dependencies"
       steps: 
@@ -60,29 +60,8 @@
             path: "./*"
             key: "${{ github.sha }}-cache"
         - 
-          name: "Run tests"
-          run: "yarn test"
-    build-application: 
-      name: "build application"
-      runs-on: "ubuntu-latest"
-      needs: "test"
-      steps: 
-        - 
-          name: "Set up NodeJS"
-          uses: "actions/setup-node@master"
-          with: 
-            node-version: "16.19.0"
-        - 
-          name: "Cache"
-          uses: "actions/cache@main"
-          with: 
-            path: "./*"
-            key: "${{ github.sha }}-cache"
-        - 
           name: "Build application"
           run: "yarn build"
-          env: 
-            CI: "${{secrets.FITO_ENV_CI}}"
         - 
           name: "Cache"
           uses: "actions/cache@main"
@@ -102,7 +81,7 @@
             key: "${{ github.sha }}-cache"
         - 
           name: "Build docker image"
-          run: "wget https://statics.dimaslz.dev/fito/docker/dockerfile-static.docker.tmpl -O Dockerfile.tmpl\n      export ARGS=\"ARG CI\"\n      export SOURCE=\"./dist\"\n      export FILES=\"COPY package.json /app/package.json\nCOPY public /app/public\"\n      envsubst < Dockerfile.tmpl > Dockerfile\n      docker build . --build-arg CI=\"${{secrets.FITO_ENV_CI}}\" -t ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_image"
+          run: "wget https://statics.dimaslz.dev/fito/docker/dockerfile-static.docker.tmpl -O Dockerfile.tmpl\n      export ARGS=\"\"\n      export SOURCE=\"./dist\"\n      export FILES=\"COPY package.json /app/package.json\nCOPY public /app/public\"\n      envsubst < Dockerfile.tmpl > Dockerfile\n      docker build .  -t ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_image"
         - 
           name: "prepare connection"
           run: "mkdir -p ~/.ssh/\necho \"$SSH_KEY\" > ~/.ssh/prod.key\nchmod 600 ~/.ssh/prod.key\ncat >>~/.ssh/config <<END\nHost prod\n  HostName $SSH_HOST\n  User $SSH_USER\n  IdentityFile ~/.ssh/prod.key\n  StrictHostKeyChecking no\nEND"
@@ -140,7 +119,7 @@
           run: "currentContainerGithubHash=`ssh prod \"docker ps --format=\\\"{{.Names}} {{.ID}}\\\" | grep \\\"react-battleship.dimaslz.dev\\\" || echo \\\"\\\"\"` && currentContainerGithubHash=`echo $currentContainerGithubHash | grep -Po \"^.+?\\.\" || echo \"\"` && echo \"currentContainerGithubHash=$currentContainerGithubHash\" >> $GITHUB_ENV"
         - 
           name: "run"
-          run: "newContainerID=`ssh prod \"docker run --name ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_container -e CI=\\\"${{secrets.FITO_ENV_CI}}\\\"  -d ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_image\"` && echo \"newContainerID=$newContainerID\" >> $GITHUB_ENV"
+          run: "newContainerID=`ssh prod \"docker run --name ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_container   -d ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_image\"` && echo \"newContainerID=$newContainerID\" >> $GITHUB_ENV"
         - 
           name: "get container IP"
           run: "newContainerIP=`ssh prod \"docker inspect -f \\\"{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}\\\" ${{ env.newContainerID }}\"` && echo \"newContainerIP=$newContainerIP\" >> $GITHUB_ENV"
