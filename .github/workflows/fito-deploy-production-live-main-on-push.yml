@@ -30,7 +30,7 @@
           name: "Set up NodeJS"
           uses: "actions/setup-node@master"
           with: 
-            node-version: "16.19.0"
+            node-version: "18.17"
         - 
           name: "Install yarn"
           run: "npm install -g yarn"
@@ -52,7 +52,7 @@
           name: "Set up NodeJS"
           uses: "actions/setup-node@master"
           with: 
-            node-version: "16.19.0"
+            node-version: "18.17"
         - 
           name: "Cache"
           uses: "actions/cache@main"
@@ -94,10 +94,13 @@
         - 
           name: "Push image"
           run: "docker save ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_image | bzip2 | ssh prod 'docker load'"
-    run-image-and-clean: 
+    deployment: 
       name: "run image and clean"
       runs-on: "ubuntu-latest"
       needs: "create-and-push-docker-image"
+      environment: 
+        name: "production"
+        url: "https://react-battleship.dimaslz.dev"
       steps: 
         - 
           name: "Cache"
@@ -110,16 +113,13 @@
           run: "mkdir -p ~/.ssh/\necho \"$SSH_KEY\" > ~/.ssh/prod.key\nchmod 600 ~/.ssh/prod.key\ncat >>~/.ssh/config <<END\nHost prod\n  HostName $SSH_HOST\n  User $SSH_USER\n  IdentityFile ~/.ssh/prod.key\n  StrictHostKeyChecking no\nEND"
         - 
           name: "get current currentContainerId"
-          run: "currentContainerId=`ssh prod \"docker ps --format=\\\"{{.Names}} {{.ID}}\\\" | grep \\\"react-battleship.dimaslz.dev\\\" || echo \\\"\\\"\"` && currentContainerId=`echo $currentContainerId | grep -Po \"\\s.*?$\" | tr -d \"\\n\" || echo \"\"` && echo \"currentContainerId=$currentContainerId\" >> $GITHUB_ENV"
+          run: "currentContainerId=`ssh prod \"docker ps --format=\\\"{{.Names}} {{.ID}}\\\" | grep \\\"_react-battleship.dimaslz.dev\\\" || echo \\\"\\\"\"` && currentContainerId=`echo $currentContainerId | grep -Po \"\\s.*?$\" | tr -d \"\\n\" || echo \"\"` && echo \"currentContainerId=$currentContainerId\" >> $GITHUB_ENV"
         - 
           name: "get current currentImageId"
-          run: "currentImageId=`ssh prod \"docker images --format=\\\"{{.Repository}} {{.ID}}\\\" | grep \\\"react-battleship.dimaslz.dev\\\" || echo \\\"\\\"\"` && currentImageId=`echo $currentImageId | grep -Po \"\\s(.*?$)\" | tr -d \"\\n\" || echo \"\"` && echo \"currentImageId=$currentImageId\" >> $GITHUB_ENV"
-        - 
-          name: "get current currentContainerGithubHash"
-          run: "currentContainerGithubHash=`ssh prod \"docker ps --format=\\\"{{.Names}} {{.ID}}\\\" | grep \\\"react-battleship.dimaslz.dev\\\" || echo \\\"\\\"\"` && currentContainerGithubHash=`echo $currentContainerGithubHash | grep -Po \"^.+?\\.\" || echo \"\"` && echo \"currentContainerGithubHash=$currentContainerGithubHash\" >> $GITHUB_ENV"
+          run: "currentImageId=`ssh prod \"docker images --format=\\\"{{.Repository}} {{.ID}}\\\" | grep \\\"_react-battleship.dimaslz.dev\\\" || echo \\\"\\\"\"` && currentImageId=`echo $currentImageId | grep -Po \"\\s(.*?$)\" | tr -d \"\\n\" || echo \"\"` && echo \"currentImageId=$currentImageId\" >> $GITHUB_ENV"
         - 
           name: "run"
-          run: "newContainerID=`ssh prod \"docker run --name ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_container   -d ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_image\"` && echo \"newContainerID=$newContainerID\" >> $GITHUB_ENV"
+          run: "newContainerID=`ssh prod \"docker run --name ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_container  -d ${{ env.ATTEMPTS }}_${{ github.sha }}_react-battleship.dimaslz.dev_production_image\"` && echo \"newContainerID=$newContainerID\" >> $GITHUB_ENV"
         - 
           name: "get container IP"
           run: "newContainerIP=`ssh prod \"docker inspect -f \\\"{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}\\\" ${{ env.newContainerID }}\"` && echo \"newContainerIP=$newContainerIP\" >> $GITHUB_ENV"
